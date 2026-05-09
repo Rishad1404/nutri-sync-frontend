@@ -23,3 +23,11 @@ export const changePassword = async (payload: any) => {
   );
   return res.data;
 };
+
+export const updateHealthProfile = async (payload: any) => {
+  const res = await api.patch<ApiResponse<IUserProfile>>(
+    "/users/health-profile",
+    payload,
+  );
+  return res.data;
+};

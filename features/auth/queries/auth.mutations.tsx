@@ -15,8 +15,9 @@ import { envVars } from "@/lib/env";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import type { ILoginResponse, SocialProvider } from "../types/auth.type";
+import type { ILoginResponse, SocialProvider, IChangePasswordResponse } from "../types/auth.type";
 import type { ILoginPayload } from "../validators/login.validator";
+import type { IChangePasswordPayload } from "../validators/change-password.validator";
 import { ChangePassword, updateProfile } from "../services/auth.api";
 
 export const AUTH_QUERY_KEYS = {
@@ -291,24 +292,45 @@ export const useSocialLoginMutation = () => {
 };
 
 export const useChangePasswordMutation = () => {
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<IChangePasswordResponse, Error, Pick<IChangePasswordPayload, "currentPassword" | "newPassword">>({
     mutationKey: AUTH_MUTATION_KEYS.changePassword,
     mutationFn: ChangePassword,
-    onSuccess: () => {
-      console.log("[Change Password] Password changed successfully");
-      toast.success(
-        "Password changed successfully! Please log in with your new password.",
-      );
-      router.push("/login");
+    onSuccess: async (data) => {
+      console.log("[Change Password] Password changed successfully, data:", data);
+      
+      try {
+        // Extract new tokens from the response to refresh the session
+        const accessToken = data?.accessToken;
+        const refreshToken = data?.refreshToken;
+        const sessionToken = data?.sessionToken || data?.token;
+
+        if (accessToken || refreshToken || sessionToken) {
+          await setTokens({
+            accessToken,
+            refreshToken,
+            sessionToken,
+          });
+          console.log("[Change Password] Tokens refreshed successfully");
+        }
+      } catch (err) {
+        console.error("[Change Password] Failed to refresh tokens:", err);
+      }
+
+      // Invalidate the 'me' query to ensure the session status is updated
+      await queryClient.invalidateQueries({
+        queryKey: AUTH_QUERY_KEYS.me,
+      });
+
+      toast.success("Password updated successfully! Your session has been secured.");
     },
     onError: (error: unknown) => {
       console.error("[Change Password] Error:", error);
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to change password. Please check your details and try again.",
+          : "Failed to change password. Please check your current password and try again.",
       );
     },
   });

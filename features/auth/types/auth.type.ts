@@ -27,7 +27,18 @@ export interface ILoginResponse {
   [key: string]: any;
 }
 
+export interface IChangePasswordResponse {
+  accessToken: string;
+  refreshToken: string;
+  token?: string;
+  sessionToken?: string;
+  [key: string]: any;
+}
+
 export interface IUserResponse {
+  weight: number;
+  height: number;
+  calorieTarget: number;
   id: string;
   needPasswordChange: boolean;
   email: string;

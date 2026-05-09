@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { cookies } from "next/headers";
 import { deleteCookie } from "@/lib/utils/cookie";
-import type { ILoginResponse, IUserResponse } from "../types/auth.type";
+import type {
+  ILoginResponse,
+  IUserResponse,
+  IChangePasswordResponse,
+} from "../types/auth.type";
 import { api } from "@/lib/axios/http";
+import { cookies } from "next/headers";
 
 export async function loginRequest(payload: {
   email: string;
@@ -57,7 +61,11 @@ export async function ChangePassword(payload: {
   currentPassword: string;
   newPassword: string;
 }) {
-  const res = await api.post("/auth/change-password", payload);
+  const res = await api.post<IChangePasswordResponse>(
+    "/auth/change-password",
+    payload,
+  );
+
   return res.data;
 }
 

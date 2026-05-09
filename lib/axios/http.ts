@@ -22,10 +22,14 @@ const axiosInstance = async () => {
     });
   }
 
-  // ── 2. Server-side handling ────────────────────────────
   const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
-  
+
+  // Get tokens for the headers
+  const accessToken = cookieStore.get("accessToken")?.value;
+  const sessionToken = cookieStore.get("better-auth.session_token")?.value;
+
+  // Build the cookie string manually for the server-side request
   const cookieHeader = cookieStore
     .getAll()
     .map((cookie) => `${cookie.name}=${cookie.value}`)
@@ -37,6 +41,12 @@ const axiosInstance = async () => {
     headers: {
       "Content-Type": "application/json",
       Cookie: cookieHeader,
+      // Favor accessToken (JWT) for Authorization header, fallback to sessionToken
+      ...(accessToken
+        ? { Authorization: `Bearer ${accessToken}` }
+        : sessionToken
+          ? { Authorization: `Bearer ${sessionToken}` }
+          : {}),
     },
   });
 };

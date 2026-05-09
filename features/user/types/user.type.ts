@@ -8,6 +8,11 @@ export interface IUserProfile {
   allergies?: string;
   goals?: string;
   calorieTarget?: number;
+  age?: number;
+  gender?: string;
+  weight?: number;
+  height?: number;
+  activityLevel?: string;
   emailVerified: boolean;
   status: string;
   createdAt: string;

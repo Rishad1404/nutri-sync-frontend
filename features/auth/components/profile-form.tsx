@@ -10,11 +10,9 @@ import {
   type IProfilePayload,
 } from "@/features/auth/validators/profile.validator";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Camera, Loader2, Lock } from "lucide-react";
-import { useState } from "react";
+import { Camera, Loader2 } from "lucide-react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
-import ChangePasswordDialog from "./change-password-dialog";
 
 interface User {
   id: string;
@@ -31,7 +29,6 @@ interface ProfileFormProps {
 
 export default function ProfileForm({ user }: ProfileFormProps) {
   const mutation = useUpdateProfileMutation();
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
 
   const form = useForm<IProfilePayload>({
     mode: "onTouched",
@@ -140,40 +137,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             hint="Email cannot be changed. Contact support if needed."
           />
         </div>
-
-        <Separator className="my-6" />
-
-        {/* Security Section */}
-        <div>
-          <h3 className="mb-2 text-lg font-semibold">Security</h3>
-          <p className="mb-4 text-sm text-muted-foreground">
-            Manage your password and account security
-          </p>
-
-          <div className="flex items-center justify-between rounded-lg border bg-muted/30 p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                <Lock className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium">Password</p>
-                <p className="text-sm text-muted-foreground">
-                  Last changed recently
-                </p>
-              </div>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setShowPasswordDialog(true)}
-              disabled={mutation.isPending}
-            >
-              Change Password
-            </Button>
-          </div>
-        </div>
-
         {/* Action Buttons */}
         <div className="flex items-center justify-end gap-3 border-t pt-6">
           <Button
@@ -194,11 +157,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             Save Changes
           </Button>
         </div>
-
-        <ChangePasswordDialog
-          open={showPasswordDialog}
-          onOpenChange={setShowPasswordDialog}
-        />
       </form>
     </FormProvider>
   );

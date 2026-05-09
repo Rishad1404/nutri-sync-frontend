@@ -4,6 +4,7 @@ import {
   updateProfile,
   changePassword,
   getProfile,
+  updateHealthProfile,
 } from "../services/user.api";
 import { toast } from "sonner";
 import { AUTH_QUERY_KEYS } from "@/features/auth/queries/auth.querie";
@@ -33,7 +34,31 @@ export const useUpdateProfileMutation = () => {
       queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEYS.me });
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || error.message || "Failed to update profile");
+      toast.error(
+        error?.response?.data?.message ||
+          error.message ||
+          "Failed to update profile",
+      );
+    },
+  });
+};
+
+export const useUpdateHealthProfileMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateHealthProfile,
+    onSuccess: () => {
+      toast.success("Health profile updated successfully");
+      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEYS.profile });
+      queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEYS.me });
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message ||
+          error.message ||
+          "Failed to update health profile",
+      );
     },
   });
 };
