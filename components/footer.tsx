@@ -3,21 +3,21 @@ import { Leaf } from "lucide-react";
 
 const footerLinks = {
   product: [
-    { name: "Features", href: "#" },
-    { name: "Meal Plans", href: "#" },
-    { name: "AI Assistant", href: "#" },
-    { name: "Pricing", href: "#" },
+    { name: "Features", href: "/features" },
+    { name: "Meal Plans", href: "/meal-plans" },
+    { name: "AI Assistant", href: "/ai-assistant" },
+    { name: "Pricing", href: "/pricing" },
   ],
   company: [
-    { name: "About Us", href: "#" },
-    { name: "Careers", href: "#" },
-    { name: "Contact", href: "#" },
-    { name: "Blog", href: "#" },
+    { name: "About Us", href: "/about" },
+    { name: "Careers", href: "/careers" },
+    { name: "Contact", href: "/contact" },
+    { name: "Blog", href: "/blog" },
   ],
   legal: [
-    { name: "Privacy Policy", href: "#" },
-    { name: "Terms of Service", href: "#" },
-    { name: "Cookie Policy", href: "#" },
+    { name: "Privacy Policy", href: "/privacy" },
+    { name: "Terms of Service", href: "/terms" },
+    { name: "Cookie Policy", href: "/cookies" },
   ],
 };
 
@@ -32,7 +32,7 @@ export default function Footer() {
               <div className="w-8 h-8 bg-[#065E32] rounded-lg flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
                 <Leaf className="w-4 h-4 text-white" />
               </div>
-              <span 
+              <span
                 className="text-xl font-bold text-[#065E32] dark:text-[#44B74C]"
                 style={{ fontFamily: "'Outfit', 'Poppins', sans-serif" }}
               >
@@ -40,18 +40,24 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Empowering your health journey with AI-driven nutrition plans, smart tracking, and a community dedicated to wellness.
+              Empowering your health journey with AI-driven nutrition plans,
+              smart tracking, and a community dedicated to wellness.
             </p>
           </div>
 
           {/* Links Columns */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:col-span-3">
             <div>
-              <h3 className="font-semibold text-foreground mb-4 font-heading">Product</h3>
+              <h3 className="font-semibold text-foreground mb-4 font-heading">
+                Product
+              </h3>
               <ul className="space-y-3">
                 {footerLinks.product.map((link) => (
                   <li key={link.name}>
-                    <Link href={link.href} className="text-sm text-muted-foreground hover:text-[#44B74C] transition-colors">
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-[#44B74C] transition-colors"
+                    >
                       {link.name}
                     </Link>
                   </li>
@@ -59,11 +65,16 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-4 font-heading">Company</h3>
+              <h3 className="font-semibold text-foreground mb-4 font-heading">
+                Company
+              </h3>
               <ul className="space-y-3">
                 {footerLinks.company.map((link) => (
                   <li key={link.name}>
-                    <Link href={link.href} className="text-sm text-muted-foreground hover:text-[#44B74C] transition-colors">
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-[#44B74C] transition-colors"
+                    >
                       {link.name}
                     </Link>
                   </li>
@@ -71,11 +82,16 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-foreground mb-4 font-heading">Legal</h3>
+              <h3 className="font-semibold text-foreground mb-4 font-heading">
+                Legal
+              </h3>
               <ul className="space-y-3">
                 {footerLinks.legal.map((link) => (
                   <li key={link.name}>
-                    <Link href={link.href} className="text-sm text-muted-foreground hover:text-[#44B74C] transition-colors">
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-[#44B74C] transition-colors"
+                    >
                       {link.name}
                     </Link>
                   </li>
@@ -91,7 +107,8 @@ export default function Footer() {
             © {new Date().getFullYear()} NutriSync. All rights reserved.
           </p>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            Made with <Leaf className="w-3 h-3 text-[#44B74C]" /> for a healthier world.
+            Made with <Leaf className="w-3 h-3 text-[#44B74C]" /> for a
+            healthier world.
           </div>
         </div>
       </div>

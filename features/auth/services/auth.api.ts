@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { deleteCookie } from "@/lib/utils/cookie";
 import type { ILoginResponse, IUserResponse } from "../types/auth.type";
 import { api } from "@/lib/axios/http";
@@ -72,7 +73,20 @@ export async function logoutRequest() {
   return res.data;
 }
 
-export async function getMeRequest(): Promise<IUserResponse> {
-  const res = await api.get<IUserResponse>("/v1/auth/me");
-  return res.data;
+export async function getMeRequest(): Promise<IUserResponse | null> {
+  try {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+
+    if (!accessToken) {
+      return null;
+    }
+
+    const res = await api.get<IUserResponse>("/v1/auth/me");
+    return res.data;
+  } catch (error) {
+    // If the request fails (e.g., backend 500 or 401), we return null to ensure the frontend doesn't crash
+    console.error("Fetch user error:", error);
+    return null;
+  }
 }

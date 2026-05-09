@@ -126,5 +126,23 @@
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
+  }
+
+  /* Premium Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-[#F9FAFB] dark:bg-black;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[#065E32]/20 dark:bg-[#44B74C]/20 rounded-full border-4 border-solid border-[#F9FAFB] dark:border-black transition-colors;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-[#065E32]/40 dark:bg-[#44B74C]/40;
   }
 }

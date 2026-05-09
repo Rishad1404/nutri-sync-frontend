@@ -9,7 +9,7 @@ export const AUTH_QUERY_KEYS = {
 };
 
 export const useMeQuery = () => {
-  return useQuery<IUserResponse>({
+  return useQuery<IUserResponse | null>({
     queryKey: AUTH_QUERY_KEYS.me,
     queryFn: getMeRequest,
     retry: false,
