@@ -1,50 +1,37 @@
-import { getNewTokensWithRefreshToken } from "@/features/auth/services/auth.service";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ApiResponse } from "@/types/api.types";
 import axios from "axios";
-import { cookies, headers } from "next/headers";
 import { envVars } from "../env";
-import { isTokenExpiringSoon } from "../utils/token";
 
 if (!envVars.API_URL) {
   throw new Error("API_BASE_URL is not defined in environment variables");
 }
 
-async function tryRefreshToken(
-  accessToken: string,
-  refreshToken: string,
-): Promise<void> {
-  if (!(await isTokenExpiringSoon(accessToken))) {
-    return;
-  }
-
-  const requestHeader = await headers();
-
-  if (requestHeader.get("x-token-refreshed") === "1") {
-    return;
-  }
-
-  try {
-    await getNewTokensWithRefreshToken(refreshToken);
-  } catch (error: unknown) {
-    console.error("Error refreshing token in http client:", error);
-  }
-}
+const isServer = typeof window === "undefined";
 
 const axiosInstance = async () => {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-  const refreshToken = cookieStore.get("refreshToken")?.value;
-
-  if (accessToken && refreshToken) {
-    await tryRefreshToken(accessToken, refreshToken);
+  // ── 1. Client-side handling ────────────────────────────
+  if (!isServer) {
+    return axios.create({
+      baseURL: envVars.API_URL,
+      timeout: 30000,
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 
+  // ── 2. Server-side handling ────────────────────────────
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  
   const cookieHeader = cookieStore
     .getAll()
     .map((cookie) => `${cookie.name}=${cookie.value}`)
     .join("; ");
 
-  const instance = axios.create({
+  return axios.create({
     baseURL: envVars.API_URL,
     timeout: 30000,
     headers: {
@@ -52,8 +39,6 @@ const axiosInstance = async () => {
       Cookie: cookieHeader,
     },
   });
-
-  return instance;
 };
 
 export interface ApiRequestOptions {
@@ -61,7 +46,7 @@ export interface ApiRequestOptions {
   headers?: Record<string, string>;
 }
 
-const httpGet = async <TData>(
+export const httpGet = async <TData>(
   endpoint: string,
   options?: ApiRequestOptions,
 ): Promise<ApiResponse<TData>> => {
@@ -72,13 +57,15 @@ const httpGet = async <TData>(
       headers: options?.headers,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`GET request to ${endpoint} failed:`, error);
-    throw error;
+    throw new Error(
+      error?.response?.data?.message || error.message || "GET request failed",
+    );
   }
 };
 
-const httpPost = async <TData>(
+export const httpPost = async <TData>(
   endpoint: string,
   data: unknown,
   options?: ApiRequestOptions,
@@ -90,13 +77,15 @@ const httpPost = async <TData>(
       headers: options?.headers,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`POST request to ${endpoint} failed:`, error);
-    throw error;
+    throw new Error(
+      error?.response?.data?.message || error.message || "POST request failed",
+    );
   }
 };
 
-const httpPut = async <TData>(
+export const httpPut = async <TData>(
   endpoint: string,
   data: unknown,
   options?: ApiRequestOptions,
@@ -108,13 +97,15 @@ const httpPut = async <TData>(
       headers: options?.headers,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`PUT request to ${endpoint} failed:`, error);
-    throw error;
+    throw new Error(
+      error?.response?.data?.message || error.message || "PUT request failed",
+    );
   }
 };
 
-const httpPatch = async <TData>(
+export const httpPatch = async <TData>(
   endpoint: string,
   data: unknown,
   options?: ApiRequestOptions,
@@ -126,13 +117,15 @@ const httpPatch = async <TData>(
       headers: options?.headers,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`PATCH request to ${endpoint} failed:`, error);
-    throw error;
+    throw new Error(
+      error?.response?.data?.message || error.message || "PATCH request failed",
+    );
   }
 };
 
-const httpDelete = async <TData>(
+export const httpDelete = async <TData>(
   endpoint: string,
   options?: ApiRequestOptions,
 ): Promise<ApiResponse<TData>> => {
@@ -143,9 +136,13 @@ const httpDelete = async <TData>(
       headers: options?.headers,
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error(`DELETE request to ${endpoint} failed:`, error);
-    throw error;
+    throw new Error(
+      error?.response?.data?.message ||
+        error.message ||
+        "DELETE request failed",
+    );
   }
 };
 

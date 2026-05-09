@@ -1,22 +1,27 @@
 "use client";
 
 import {
-  ChevronRight,
+  Activity,
+  Apple,
+  Brain,
   Clapperboard,
   Heart,
-  Image,
   LayoutDashboard,
   LifeBuoy,
   List,
+  Lock,
   MoreVertical,
   Package,
   Shield,
   ShoppingCart,
   Tag,
+  User,
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
+import logo from "@/public/logo.png";
 
 import {
   Sidebar,
@@ -55,9 +60,14 @@ const iconMap = {
   LifeBuoy,
   List,
   Heart,
-  Image,
   Clapperboard,
+  User,
+  Lock,
+  Apple,
+  Brain,
+  Activity,
 } as const;
+
 export type IconMapKey = keyof typeof iconMap;
 
 export interface DashboardSidebarMenuItem {
@@ -83,14 +93,14 @@ export interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ menu = [], user }: DashboardSidebarProps) {
-    const pathname = usePathname();
-  
-  const { toggleSidebar } = useSidebar();
+  const pathname = usePathname();
+  const { toggleSidebar, state } = useSidebar();
   const { mutate: logout, isPending } = useLogoutMutation();
 
+  const isCollapsed = state === "collapsed";
+
   const isActive = (url: string) =>
-    url === "/dashboard" ||
-    url === "/dashboard/admin"
+    url === "/dashboard" || url === "/dashboard/admin"
       ? pathname === url
       : pathname.startsWith(url);
 
@@ -101,62 +111,84 @@ export function DashboardSidebar({ menu = [], user }: DashboardSidebarProps) {
   ).filter((group) => group.items.length > 0);
 
   return (
-    <Sidebar className="bg-linear-to-b from-background to-muted/30 backdrop-blur supports-backdrop-filter:bg-background/80">
-      <SidebarHeader className="px-3 py-2">
-        <div className="flex items-center justify-between">
-                    <Link href="/" className="text-lg font-bold">
-            StackKit
-          </Link>
-          
-          {/* Collapser for small screens */}
-          <button
-            onClick={toggleSidebar}
-            className="rounded-md p-1.5 text-muted-foreground hover:bg-muted/60 hover:text-foreground lg:hidden"
-            aria-label="Toggle sidebar"
+    <Sidebar
+      variant="sidebar"
+      collapsible="icon"
+      className="border-r border-border bg-white dark:bg-[#020617] transition-all duration-300"
+    >
+      <SidebarHeader className="h-16 flex items-center justify-center px-4">
+        <div className="flex w-full items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-3 group overflow-hidden"
           >
-            <ChevronRight className="h-4 w-4" />
-          </button>
+            <div className="flex shrink-0 items-center justify-center">
+              <Image
+                src={logo}
+                alt="NutriSync Logo"
+                width={180}
+                height={100}
+                className="group-hover:scale-105 transition-transform duration-300"
+                priority
+              />
+            </div>
+          </Link>
         </div>
       </SidebarHeader>
 
-      <Separator />
+      <Separator className="opacity-50" />
 
-      <SidebarContent>
+      <SidebarContent className="px-2 py-4 gap-4">
         {groupedMenu.map((group) => (
-          <SidebarGroup key={group.label}>
-            <SidebarGroupLabel className="text-xs font-medium tracking-wide text-muted-foreground">
-              {group.label}
-            </SidebarGroupLabel>
+          <SidebarGroup key={group.label} className="p-0">
+            {!isCollapsed && (
+              <SidebarGroupLabel className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-2">
+                {group.label}
+              </SidebarGroupLabel>
+            )}
             <SidebarGroupContent>
-              <SidebarMenu>
+              <SidebarMenu className="gap-1">
                 {group.items.map((item) => {
-                  const Icon = iconMap[item.icon] ?? LayoutDashboard;
+                  const IconComponent = iconMap[item.icon] ?? LayoutDashboard;
                   const active = isActive(item.url);
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
-                        tooltip={item.title}
-                        className={cn(
-                          "hover:bg-muted dark:hover:bg-muted/80",
-                          active && "bg-muted dark:bg-muted/80",
+                        render={(props) => (
+                          <Link
+                            {...props}
+                            href={item.url || "#"}
+                            onClick={() => {
+                              if (
+                                typeof window !== "undefined" &&
+                                window.innerWidth < 768
+                              ) {
+                                toggleSidebar();
+                              }
+                            }}
+                            className={cn(
+                              "flex h-10 w-full items-center gap-3 rounded-xl px-3 transition-all duration-200 outline-none",
+                              active
+                                ? "bg-[#065E32]/10 text-[#065E32] dark:bg-[#065E32]/20 dark:text-[#4ade80] font-semibold"
+                                : "hover:bg-muted text-muted-foreground hover:text-foreground",
+                            )}
+                          >
+                            <IconComponent
+                              className={cn(
+                                "h-4.5 w-4.5 shrink-0",
+                                active
+                                  ? "text-current"
+                                  : "text-muted-foreground/70",
+                              )}
+                            />
+                            {!isCollapsed && (
+                              <span className="truncate">{item.title}</span>
+                            )}
+                          </Link>
                         )}
-                      >
-                                                <Link
-                          href={item.url || "#"}
-                          onClick={() => {
-                            if (
-                              typeof window !== "undefined" &&
-                              window.innerWidth < 768
-                            ) {
-                              toggleSidebar();
-                            }
-                          }}
-                        >
-                          <Icon className="h-4 w-4" />
-                          <span>{item.title}</span>
-                        </Link>
-                        
-                      </SidebarMenuButton>
+                        tooltip={item.title}
+                        isActive={active}
+                      />
                     </SidebarMenuItem>
                   );
                 })}
@@ -166,49 +198,90 @@ export function DashboardSidebar({ menu = [], user }: DashboardSidebarProps) {
         ))}
       </SidebarContent>
 
-      <Separator className="mt-auto" />
-
-      <SidebarFooter className="border-t bg-muted/40 p-3">
+      <SidebarFooter className="p-3 bg-muted/20 border-t border-border">
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex w-full items-center justify-between gap-3 rounded-lg px-2 py-1.5 text-left hover:bg-muted">
-            <span className="flex items-center gap-3">
-              <span className="relative">
-                <Avatar className="h-9 w-9">
+          <DropdownMenuTrigger
+            render={(props) => (
+              <button
+                {...props}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-xl p-2 text-left transition-all hover:bg-muted outline-none",
+                  isCollapsed && "justify-center p-1",
+                )}
+              >
+                <Avatar className="h-8 w-8 rounded-lg border border-border shadow-sm">
                   <AvatarImage
-                    src={user?.image || "/assets/images/logo.png"}
+                    src={user?.image || ""}
                     alt={user?.name || "User"}
-                    className="object-cover"
                   />
-                  <AvatarFallback>
-                    {user?.name?.toUpperCase().charAt(0) || "U"}
+                  <AvatarFallback className="bg-[#065E32] text-white text-xs">
+                    {user?.name?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
-                <span
-                  className="absolute -right-0.5 -top-0.5 block h-2.5 w-2.5 rounded-full border-2 border-background bg-primary"
-                  aria-label="Online"
-                />
-              </span>
-              <span className="min-w-0">
-                <span className="block truncate text-sm font-medium">
-                  {user?.name || "Admin"}
-                </span>
-                <span className="block truncate text-xs text-muted-foreground">
-                  {user?.email}
-                </span>
-              </span>
-            </span>
-            <MoreVertical className="h-4 w-4 text-muted-foreground" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="top" align="end" className="w-56">
+                {!isCollapsed && (
+                  <div className="flex flex-1 flex-col min-w-0">
+                    <span className="truncate text-sm font-bold text-foreground leading-none mb-1">
+                      {user?.name || "Member"}
+                    </span>
+                    <span className="truncate text-[10px] text-muted-foreground uppercase tracking-tight">
+                      {user?.role || "USER"}
+                    </span>
+                  </div>
+                )}
+                {!isCollapsed && (
+                  <MoreVertical className="h-4 w-4 text-muted-foreground/50 shrink-0" />
+                )}
+              </button>
+            )}
+          />
+          <DropdownMenuContent
+            side="right"
+            align="end"
+            className="w-56 rounded-xl shadow-xl border-border/50 backdrop-blur-xl"
+          >
             <DropdownMenuGroup>
-              <DropdownMenuLabel>Account</DropdownMenuLabel>
-              <DropdownMenuItem>
-                                <Link href="/dashboard/my-profile">Profile</Link>
-                
-              </DropdownMenuItem>
+              <DropdownMenuLabel className="font-normal p-2">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-bold leading-none">{user?.name}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user?.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled={isPending} onClick={() => logout()}>
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                render={(props) => (
+                  <Link
+                    {...props}
+                    href="/dashboard/profile"
+                    className="flex items-center w-full rounded-lg cursor-pointer p-2 hover:bg-muted outline-none"
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    My Profile
+                  </Link>
+                )}
+              />
+              <DropdownMenuItem
+                render={(props) => (
+                  <Link
+                    {...props}
+                    href="/dashboard/change-password"
+                    className="flex items-center w-full rounded-lg cursor-pointer p-2 hover:bg-muted outline-none"
+                  >
+                    <Lock className="mr-2 h-4 w-4" />
+                    Security
+                  </Link>
+                )}
+              />
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              disabled={isPending}
+              onClick={() => logout()}
+              className="rounded-lg cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive"
+            >
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

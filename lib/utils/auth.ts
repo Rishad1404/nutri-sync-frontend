@@ -1,4 +1,9 @@
 export type UserRole = "ADMIN" | "USER";
+export type SubscriptionStatus =
+  | "ACTIVE"
+  | "INACTIVE"
+  | "EXPIRED"
+  | "CANCELLED";
 
 export const authRoutes = [
   "/login",
@@ -9,7 +14,7 @@ export const authRoutes = [
 ];
 
 export const isAuthRoute = (pathname: string) => {
-  return authRoutes.some((router: string) => router === pathname);
+  return authRoutes.some((route: string) => route === pathname);
 };
 
 export type RouteConfig = {
@@ -72,4 +77,20 @@ export const isValidRedirectForRole = (
   }
 
   return false;
+};
+
+// Subscription-related routes (optional - for future use)
+export const isSubscriptionExemptRoute = (pathname: string): boolean => {
+  const exemptRoutes = [
+    "/admin/subscription",
+    "/admin/dashboard",
+    "/admin/settings",
+  ];
+  return exemptRoutes.some((route) => pathname.startsWith(route));
+};
+
+// Write operations that require active subscription (optional - for future use)
+export const isWriteRoute = (pathname: string): boolean => {
+  const writeRoutes = ["/admin/users", "/admin/meal-plans", "/admin/content"];
+  return writeRoutes.some((route) => pathname.includes(route));
 };

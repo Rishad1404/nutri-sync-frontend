@@ -18,6 +18,7 @@ import { useMeQuery } from "@/features/auth/queries/auth.querie";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import logo from "@/public/logo.png";
 
 const loggedOutLinks = [
   { name: "Home", href: "/" },
@@ -76,10 +77,11 @@ export default function Navbar() {
           aria-label="NutriSync Home"
         >
           <Image
-            src="/logo.png"
+            src={logo}
             alt="NutriSync"
             width={105}
             height={105}
+            priority
             className="object-contain transition-transform group-hover:scale-105"
           />
         </Link>
@@ -157,7 +159,7 @@ export default function Navbar() {
               <SheetHeader className="text-left px-6 pt-6 pb-4 border-b border-[#065E32]/10 dark:border-[#44B74C]/10">
                 <SheetTitle className="flex items-center gap-2">
                   <Image
-                    src="/logo.png"
+                    src={logo}
                     alt="NutriSync"
                     width={80}
                     height={80}

@@ -7,12 +7,17 @@ interface EnvVars {
 }
 
 const loadEnvVars = (): EnvVars => {
-  const publicVars = ["APP_NAME", "APP_URL", "API_URL", "BETTER_AUTH_URL"];
+  const publicVars = [
+    "NEXT_PUBLIC_APP_NAME",
+    "NEXT_PUBLIC_APP_URL",
+    "NEXT_PUBLIC_API_URL",
+    "NEXT_PUBLIC_BETTER_AUTH_URL",
+  ];
 
   for (const varName of publicVars) {
-    if (!process.env[`NEXT_PUBLIC_${varName}`]) {
+    if (!process.env[varName]) {
       console.warn(
-        `Environment variable NEXT_PUBLIC_${varName} is not set. Using default value.`,
+        `Environment variable ${varName} is not set. Using default value.`,
       );
     }
   }

@@ -1,164 +1,167 @@
-import {
-  getNewTokensWithRefreshToken,
-  getSession,
-} from "@/features/auth/services/auth.service";
-import { envVars } from "@/lib/env";
+// proxy.ts (for NutriSync - ROOT DIRECTORY)
+import { NextRequest, NextResponse } from "next/server";
 import {
   getDefaultDashboardRoute,
   getRouteOwner,
   isAuthRoute,
   UserRole,
 } from "@/lib/utils/auth";
-import { jwtUtils } from "@/lib/utils/jwt";
-import { isTokenExpiringSoon } from "@/lib/utils/token";
-import { NextRequest, NextResponse } from "next/server";
 
-async function refreshTokenMiddleware(refreshToken: string): Promise<boolean> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function decodeJWTPayload(token: string): Record<string, any> | null {
   try {
-    const refresh = await getNewTokensWithRefreshToken(refreshToken);
-    if (!refresh) {
-      return false;
-    }
-    return true;
-  } catch (error) {
-    console.error("Error refreshing token in middleware:", error);
-    return false;
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(""),
+    );
+    return JSON.parse(jsonPayload);
+  } catch {
+    return null;
   }
 }
 
+function isTokenExpired(token: string): boolean {
+  const decoded = decodeJWTPayload(token);
+  if (!decoded?.exp) return true;
+  return decoded.exp < Math.floor(Date.now() / 1000);
+}
+
+const PUBLIC_ROUTES = [
+  "/",
+  "/discover",
+  "/how-it-works",
+  "/contact",
+  "/ai-analyzer",
+  "/pricing",
+  "/about",
+];
+
 export async function proxy(request: NextRequest) {
   try {
-    const { pathname } = request.nextUrl;
+    const { pathname, searchParams } = request.nextUrl;
     const accessToken = request.cookies.get("accessToken")?.value;
-    const refreshToken = request.cookies.get("refreshToken")?.value;
+    const sessionToken = request.cookies.get(
+      "better-auth.session_token",
+    )?.value;
 
-    const decodedAccessToken =
-      accessToken &&
-      jwtUtils.verifyToken(accessToken, envVars.JWT_ACCESS_SECRET as string)
-        .data;
-
-    const isValidAccessToken =
-      accessToken &&
-      jwtUtils.verifyToken(accessToken, envVars.JWT_ACCESS_SECRET as string)
-        .success;
-
+    // ── 1. Decode Access Token ─────────────────────────────
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let decoded: Record<string, any> | null = null;
+    let isValid = false;
     let userRole: UserRole | null = null;
 
-    if (decodedAccessToken) {
-      userRole = (decodedAccessToken.role as UserRole) || null;
+    if (accessToken) {
+      decoded = decodeJWTPayload(accessToken);
+      if (decoded?.role && !isTokenExpired(accessToken)) {
+        isValid = true;
+        userRole = (decoded.role as UserRole) || "USER";
+      }
     }
 
-    const normalizedUserRole = userRole === "ADMIN" ? "ADMIN" : "USER";
-    const routerOwner = getRouteOwner(pathname);
+    // If no access token but has session token, consider authenticated
+    const isAuthenticated = isValid || !!sessionToken;
+
+    const routeOwner = getRouteOwner(pathname);
     const isAuth = isAuthRoute(pathname);
 
-    if (
-      isValidAccessToken &&
-      refreshToken &&
-      (await isTokenExpiringSoon(accessToken))
-    ) {
-      const requestHeaders = new Headers(request.headers);
-
-      const response = NextResponse.next({
-        request: {
-          headers: requestHeaders,
-        },
-      });
-
-      try {
-        const refreshed = await refreshTokenMiddleware(refreshToken);
-
-        if (refreshed) {
-          requestHeaders.set("x-token-refreshed", "1");
-        }
-
-        return NextResponse.next({
-          request: {
-            headers: requestHeaders,
-          },
-          headers: response.headers,
-        });
-      } catch (error) {
-        console.error("Error refreshing token:", error);
-      }
-
-      return response;
-    }
-
-    if (isAuth && isValidAccessToken) {
-      return NextResponse.redirect(
-        new URL(getDefaultDashboardRoute(userRole as UserRole), request.url),
-      );
-    }
-
-    if (pathname === "/reset-password") {
-      const email = request.nextUrl.searchParams.get("email");
-
-      if (accessToken && email) {
-        const userInfo = await getSession();
-
-        if (userInfo.needPasswordChange) {
+    // ── 2. /verify-email route ────────────────────────────
+    if (pathname === "/verify-email") {
+      if (isAuthenticated) {
+        if (decoded?.emailVerified === false) {
           return NextResponse.next();
-        } else {
-          return NextResponse.redirect(
-            new URL(
-              getDefaultDashboardRoute(userRole as UserRole),
-              request.url,
-            ),
-          );
         }
+        const defaultRoute = getDefaultDashboardRoute(userRole || "USER");
+        return NextResponse.redirect(new URL(defaultRoute, request.url));
       }
-
-      if (email) {
-        return NextResponse.next();
-      }
-
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    if (routerOwner === null || routerOwner === "COMMON") {
       return NextResponse.next();
     }
 
-    if (!accessToken || !isValidAccessToken) {
+    // ── 3. /reset-password route ──────────────────────────
+    if (pathname === "/reset-password") {
+      const email = searchParams.get("email");
+      if (email) {
+        return NextResponse.next();
+      }
+      if (!isAuthenticated) {
+        const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("redirect", pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+      return NextResponse.next();
+    }
+
+    // ── 4. Auth routes (login, register, etc) ─────────────
+    if (isAuth) {
+      if (isAuthenticated && userRole) {
+        // If already logged in, redirect to dashboard
+        const redirectPath = searchParams.get("redirect");
+        if (redirectPath) {
+          return NextResponse.redirect(new URL(redirectPath, request.url));
+        }
+        return NextResponse.redirect(
+          new URL(getDefaultDashboardRoute(userRole), request.url),
+        );
+      }
+      // Not logged in, allow access to auth pages
+      return NextResponse.next();
+    }
+
+    // ── 5. Public routes ──────────────────────────────────
+    if (PUBLIC_ROUTES.includes(pathname)) {
+      return NextResponse.next();
+    }
+
+    // ── 6. Protected routes - NOT authenticated ───────────
+    if (!isAuthenticated) {
+      console.log(`[Proxy] Not authenticated, redirecting to login`);
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    if (accessToken) {
-      const userInfo = await getSession();
-      if (userInfo) {
-        if (userInfo.emailVerified === false && pathname !== "/verify-email") {
-          const verifyEmailUrl = new URL("/verify-email", request.url);
-          verifyEmailUrl.searchParams.set("email", userInfo.email);
-          return NextResponse.redirect(verifyEmailUrl);
-        }
-
-        if (userInfo.needPasswordChange && pathname !== "/reset-password") {
-          const resetPasswordUrl = new URL("/reset-password", request.url);
-          resetPasswordUrl.searchParams.set("email", userInfo.email);
-          return NextResponse.redirect(resetPasswordUrl);
-        }
-      }
+    // ── 7. Protected routes - email not verified ─────────
+    if (decoded?.emailVerified === false) {
+      console.log(`[Proxy] Email not verified, redirecting to verify-email`);
+      const verifyUrl = new URL("/verify-email", request.url);
+      verifyUrl.searchParams.set("email", decoded?.email || "");
+      return NextResponse.redirect(verifyUrl);
     }
 
-    const routeOwnerNormalized = routerOwner === "ADMIN" ? "ADMIN" : "USER";
+    // ── 8. Role-based access control ─────────────────────
+    if (routeOwner) {
+      if (routeOwner === "COMMON") {
+        // Both ADMIN and USER can access COMMON routes
+        return NextResponse.next();
+      }
 
-    if (routeOwnerNormalized === "ADMIN" && normalizedUserRole !== "ADMIN") {
+      if (routeOwner === "ADMIN" && userRole !== "ADMIN") {
+        // User trying to access admin route
+        console.log(`[Proxy] User (${userRole}) trying to access ADMIN route`);
+        return NextResponse.redirect(
+          new URL(getDefaultDashboardRoute(userRole || "USER"), request.url),
+        );
+      }
+
+      if (routeOwner === userRole) {
+        // User has correct role
+        return NextResponse.next();
+      }
+
+      // Role mismatch
+      console.log(`[Proxy] Role mismatch - ${userRole} vs ${routeOwner}`);
       return NextResponse.redirect(
-        new URL(
-          getDefaultDashboardRoute(normalizedUserRole as UserRole),
-          request.url,
-        ),
+        new URL(getDefaultDashboardRoute(userRole || "USER"), request.url),
       );
     }
 
     return NextResponse.next();
   } catch (error) {
-    console.error("Error in proxy middleware:", error);
+    console.error("[Proxy] Middleware error:", error);
+    return NextResponse.next();
   }
 }
 

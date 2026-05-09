@@ -17,25 +17,24 @@ export default function LoginForm({
   searchParams?: { redirect?: string };
 }) {
   const mutation = useLoginMutation();
-  const redirectPath = searchParams?.redirect || "";
 
-  const form = useForm<ILoginPayload & { redirectPath?: string }>({
+  // Decode the redirect parameter
+  const redirectPath = searchParams?.redirect
+    ? decodeURIComponent(searchParams.redirect)
+    : undefined;
+
+  const form = useForm<ILoginPayload>({
     mode: "onTouched",
     resolver: zodResolver(loginZodSchema),
-    defaultValues: { email: "", password: "", redirectPath },
+    defaultValues: { email: "", password: "" },
   });
 
-  async function onSubmit(values: ILoginPayload & { redirectPath?: string }) {
-    try {
-      const data = await mutation.mutateAsync({
-        email: values.email,
-        password: values.password,
-        redirectPath: values.redirectPath,
-      });
-      console.log("Login successful", data);
-    } catch {
-      // Error handling is done in the mutation's onError callback
-    }
+  async function onSubmit(values: ILoginPayload) {
+    mutation.mutate({
+      email: values.email,
+      password: values.password,
+      redirectPath,
+    });
   }
 
   return (
@@ -89,10 +88,10 @@ export default function LoginForm({
             type="submit"
             size="lg"
             form="login-form"
-            disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting || mutation.isPending}
             className="w-full h-12 bg-[#065E32] hover:bg-[#044a27] text-white font-semibold rounded-xl shadow-lg shadow-[#065E32]/25 transition-all hover:shadow-xl hover:scale-[1.01] mt-2"
           >
-            {form.formState.isSubmitting ? (
+            {form.formState.isSubmitting || mutation.isPending ? (
               <span className="flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Signing in...

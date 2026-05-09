@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type SocialProvider =
   | "google"
   | "github"
@@ -5,20 +6,25 @@ export type SocialProvider =
   | "twitter"
   | "discord";
 
+// features/auth/types/auth.type.ts
+
 export interface ILoginResponse {
-  token: string;
   accessToken: string;
   refreshToken: string;
+  sessionToken?: string; // Add this
+  token?: string; // Add this
   user: {
-    needPasswordChange: boolean;
+    id: string;
     email: string;
     name: string;
-    role: string;
-    image: string;
-    status: string;
-    isDeleted: boolean;
+    role: "USER" | "ADMIN";
     emailVerified: boolean;
+    image?: string;
+    status?: string;
+    isDeleted?: boolean;
+    needPasswordChange?: boolean;
   };
+  [key: string]: any;
 }
 
 export interface IUserResponse {

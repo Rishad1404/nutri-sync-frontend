@@ -3,67 +3,84 @@ import type {
   IconMapKey,
 } from "@/components/dashboard/dashboard-sidebar";
 
+const COMMON_SETTINGS: DashboardSidebarMenuGroup = {
+  label: "Settings",
+  items: [
+    {
+      title: "My Profile",
+      url: "/dashboard/my-profile",
+      icon: "User" as IconMapKey,
+    },
+    {
+      title: "Change Password",
+      url: "/dashboard/change-password",
+      icon: "Lock" as IconMapKey,
+    },
+  ],
+};
+
 export const ADMIN: DashboardSidebarMenuGroup[] = [
   {
-    label: "Main",
+    label: "Admin Console",
     items: [
       {
-        title: "Dashboard",
+        title: "Overview",
         url: "/dashboard/admin",
         icon: "LayoutDashboard" as IconMapKey,
       },
       {
-        title: "Users",
+        title: "User Management",
         url: "/dashboard/admin/users",
         icon: "Users" as IconMapKey,
       },
       {
-        title: "Content",
+        title: "Nutritional Content",
         url: "/dashboard/admin/content",
-        icon: "Package" as IconMapKey,
+        icon: "Apple" as IconMapKey,
       },
       {
-        title: "Categories",
+        title: "Plan Categories",
         url: "/dashboard/admin/categories",
         icon: "Tag" as IconMapKey,
       },
     ],
   },
   {
-    label: "Media",
+    label: "Media & Assets",
     items: [
       {
-        title: "Images",
+        title: "Image Library",
         url: "/dashboard/admin/media/images",
         icon: "Image" as IconMapKey,
       },
       {
-        title: "Videos",
+        title: "Video Tutorials",
         url: "/dashboard/admin/media/videos",
         icon: "Clapperboard" as IconMapKey,
       },
     ],
   },
   {
-    label: "Security & Support",
+    label: "System",
     items: [
       {
-        title: "Roles & Permissions",
+        title: "Roles & Security",
         url: "/dashboard/admin/roles",
         icon: "Shield" as IconMapKey,
       },
       {
-        title: "Support",
+        title: "Support Tickets",
         url: "/dashboard/admin/support",
         icon: "LifeBuoy" as IconMapKey,
       },
     ],
   },
+  COMMON_SETTINGS,
 ];
 
 export const USER: DashboardSidebarMenuGroup[] = [
   {
-    label: "Navigation",
+    label: "Personal",
     items: [
       {
         title: "Dashboard",
@@ -71,17 +88,33 @@ export const USER: DashboardSidebarMenuGroup[] = [
         icon: "LayoutDashboard" as IconMapKey,
       },
       {
-        title: "Activity",
+        title: "My Activity",
         url: "/dashboard/activity",
-        icon: "List" as IconMapKey,
+        icon: "Activity" as IconMapKey,
       },
       {
-        title: "Saved",
+        title: "Saved Items",
         url: "/dashboard/saved",
         icon: "Heart" as IconMapKey,
       },
     ],
   },
+  {
+    label: "Nutrition",
+    items: [
+      {
+        title: "Meal Plans",
+        url: "/dashboard/meal-plans",
+        icon: "Apple" as IconMapKey,
+      },
+      {
+        title: "AI Analyzer",
+        url: "/dashboard/analyzer",
+        icon: "Brain" as IconMapKey,
+      },
+    ],
+  },
+  COMMON_SETTINGS,
 ];
 
 export const sidebar = {
