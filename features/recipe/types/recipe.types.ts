@@ -32,6 +32,8 @@ export const recipeQuerySchema = z.object({
   category: z.string().optional(),
   difficulty: z.string().optional(),
   createdById: z.string().optional(),
+  sortBy: z.string().optional(),
+  sortOrder: z.enum(["asc", "desc"]).optional(),
 });
 
 export type RecipeQuery = z.infer<typeof recipeQuerySchema>;

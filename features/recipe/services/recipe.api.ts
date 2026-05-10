@@ -13,6 +13,8 @@ export async function getAllRecipes(query: RecipeQuery = {}) {
   if (query.category) params.append("category", query.category);
   if (query.difficulty) params.append("difficulty", query.difficulty);
   if (query.createdById) params.append("createdById", query.createdById);
+  if (query.sortBy) params.append("sortBy", query.sortBy);
+  if (query.sortOrder) params.append("sortOrder", query.sortOrder);
 
   const response = await api.get<Recipe[]>(`/recipes?${params.toString()}`);
   return response;
@@ -35,5 +37,15 @@ export async function updateRecipe(id: string, payload: Partial<CreateRecipeInpu
 
 export async function deleteRecipe(id: string) {
   const response = await api.delete(`/recipes/${id}`);
+  return response;
+}
+
+export async function toggleFavoriteRecipe(id: string) {
+  const response = await api.post<{ favorited: boolean }>(`/recipes/${id}/favorite`, {});
+  return response;
+}
+
+export async function getMyFavorites() {
+  const response = await api.get<Recipe[]>("/recipes/my-favorites");
   return response;
 }

@@ -32,7 +32,7 @@ function isTokenExpired(token: string): boolean {
 
 const PUBLIC_ROUTES = [
   "/",
-  "/discover",
+  "/recipes",
   "/how-it-works",
   "/contact",
   "/ai-analyzer",
@@ -111,7 +111,11 @@ export async function proxy(request: NextRequest) {
     }
 
     // ── 5. Public routes ──────────────────────────────────
-    if (PUBLIC_ROUTES.includes(pathname)) {
+    if (
+      PUBLIC_ROUTES.some(
+        (route) => pathname === route || pathname.startsWith(`${route}/`),
+      )
+    ) {
       return NextResponse.next();
     }
 

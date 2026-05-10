@@ -94,7 +94,7 @@ export const USER: DashboardSidebarMenuGroup[] = [
       },
       {
         title: "Saved Items",
-        url: "/dashboard/saved",
+        url: "/dashboard/favorites",
         icon: "Heart" as IconMapKey,
       },
     ],

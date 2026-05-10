@@ -22,7 +22,7 @@ import logo from "@/public/logo.png";
 
 const loggedOutLinks = [
   { name: "Home", href: "/" },
-  { name: "Recipes", href: "/meal-plans" },
+  { name: "Recipes", href: "/recipes" },
   { name: "How It Works", href: "/how-it-works" },
   { name: "Contact", href: "/contact" },
   { name: "AI Analyzer", href: "/ai-analyzer" },
@@ -30,7 +30,7 @@ const loggedOutLinks = [
 
 const loggedInLinks = [
   { name: "Home", href: "/" },
-  { name: "Recipes", href: "/meal-plans" },
+  { name: "Recipes", href: "/recipes" },
   { name: "Dashboard", href: "/dashboard" },
   { name: "How It Works", href: "/how-it-works" },
   { name: "Contact", href: "/contact" },
