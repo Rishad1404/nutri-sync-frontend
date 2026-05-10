@@ -1,71 +1,113 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Table } from "@tanstack/react-table";
-import { Download, Search, X } from "lucide-react";
+import {
+  Search,
+  X,
+  SlidersHorizontal,
+  ArrowUpDown,
+  ChevronDown,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+  DropdownMenuGroup,
+} from "@/components/ui/dropdown-menu";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   searchKey?: string;
-  onExport?: () => void;
 }
 
 export function DataTableToolbar<TData>({
   table,
   searchKey,
-  onExport,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
+  const [activeSearchKey, setActiveSearchKey] = useState<string>(
+    searchKey || "",
+  );
 
-  const handleExport = () => {
-    if (onExport) {
-      onExport();
-      return;
-    }
-
-    // Default CSV Export Logic
-    const data = table.getFilteredRowModel().rows.map((row) => row.original);
-    if (data.length === 0) return;
-
-    const headers = Object.keys(data[0] as object);
-    const csvContent = [
-      headers.join(","),
-      ...data.map((row) =>
-        headers
-          .map((header) => {
-            const cell = (row as any)[header];
-            return `"${cell ?? ""}"`;
-          })
-          .join(","),
-      ),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `export-${new Date().getTime()}.csv`);
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  const columns = table
+    .getAllColumns()
+    .filter((column) => column.getCanSort() || column.getCanFilter());
 
   return (
     <div className="flex items-center justify-between gap-4 py-4">
       <div className="flex flex-1 items-center space-x-2">
-        {searchKey && (
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder={`Search by ${searchKey}...`}
-              value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-              onChange={(event) =>
-                table.getColumn(searchKey)?.setFilterValue(event.target.value)
-              }
-              className="h-9 w-full pl-9 rounded-xl border-muted-foreground/20 focus-visible:ring-primary/20"
-            />
+        {columns.length > 0 && (
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={(props) => (
+                  <Button
+                    {...props}
+                    variant="ghost"
+                    size="sm"
+                    className="h-9 px-2 rounded-xl text-muted-foreground hover:text-foreground"
+                  >
+                    <span className="text-[10px] font-bold uppercase mr-2">
+                      Filter By:
+                    </span>
+                    <span className="text-xs font-bold capitalize">
+                      {(activeSearchKey || searchKey || "Search").replace(
+                        /_/g,
+                        " ",
+                      )}
+                    </span>
+                    <ChevronDown className="ml-1 h-3 w-3 opacity-50" />
+                  </Button>
+                )}
+              />
+              <DropdownMenuContent
+                align="start"
+                className="w-48 rounded-xl p-2"
+              >
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground px-2 py-1.5">
+                    Search Category
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {columns
+                    .filter((col) => col.getCanFilter())
+                    .map((col) => (
+                      <DropdownMenuItem
+                        key={col.id}
+                        onClick={() => setActiveSearchKey(col.id)}
+                        className="rounded-lg capitalize cursor-pointer"
+                      >
+                        {col.id.replace(/_/g, " ")}
+                      </DropdownMenuItem>
+                    ))}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={`Search ${activeSearchKey || searchKey}...`}
+                value={
+                  (table
+                    .getColumn(activeSearchKey || searchKey || "")
+                    ?.getFilterValue() as string) ?? ""
+                }
+                onChange={(event) =>
+                  table
+                    .getColumn(activeSearchKey || searchKey || "")
+                    ?.setFilterValue(event.target.value)
+                }
+                className="h-9 w-full pl-9 rounded-xl border-muted-foreground/20 focus-visible:ring-primary/20"
+              />
+            </div>
           </div>
         )}
         {isFiltered && (
@@ -80,15 +122,49 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleExport}
-          className="h-9 gap-2 rounded-xl border-muted-foreground/20 hover:bg-muted"
-        >
-          <Download className="h-4 w-4" />
-          <span className="hidden sm:inline">Export CSV</span>
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={(props) => (
+              <Button
+                {...props}
+                variant="outline"
+                size="sm"
+                className="h-9 gap-2 rounded-xl border-muted-foreground/20 hover:bg-muted"
+              >
+                <ArrowUpDown className="h-4 w-4" />
+                <span className="hidden sm:inline">Sort By</span>
+                <ChevronDown className="h-3 w-3 opacity-50" />
+              </Button>
+            )}
+          />
+          <DropdownMenuContent align="end" className="w-48 rounded-xl p-2">
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="text-[10px] uppercase font-bold text-muted-foreground px-2 py-1.5">
+                Sortable Columns
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {table
+                .getAllColumns()
+                .filter((col) => col.getCanSort())
+                .map((col) => (
+                  <DropdownMenuItem
+                    key={col.id}
+                    onClick={() =>
+                      col.toggleSorting(col.getIsSorted() === "asc")
+                    }
+                    className="rounded-lg capitalize cursor-pointer flex justify-between"
+                  >
+                    {col.id.replace(/_/g, " ")}
+                    <span className="text-xs opacity-50">
+                      {col.getIsSorted() === "asc" && "↑"}
+                      {col.getIsSorted() === "desc" && "↓"}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
       </div>
     </div>
   );

@@ -294,7 +294,15 @@ export default function InputField<
               </FieldContent>
 
               {hint ? <FieldDescription>{hint}</FieldDescription> : null}
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              {fieldState.invalid && (
+                <FieldError
+                  errors={
+                    Array.isArray(fieldState.error)
+                      ? fieldState.error
+                      : [fieldState.error]
+                  }
+                />
+              )}
             </Field>
           );
         }}

@@ -108,6 +108,11 @@ export const USER: DashboardSidebarMenuGroup[] = [
         icon: "Apple" as IconMapKey,
       },
       {
+        title: "Recipes",
+        url: "/dashboard/my-recipes",
+        icon: "Utensils" as IconMapKey,
+      },
+      {
         title: "AI Analyzer",
         url: "/dashboard/analyzer",
         icon: "Brain" as IconMapKey,

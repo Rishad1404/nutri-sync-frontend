@@ -3,7 +3,6 @@
 import InputField from "@/components/global/form-field/input-field";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { useUpdateProfileMutation } from "@/features/auth/queries/auth.mutations";
 import {
   profileZodSchema,
