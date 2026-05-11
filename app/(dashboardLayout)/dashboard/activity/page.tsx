@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useNutritionHistory } from "@/features/nutrition/queries/nutrition.queries";
@@ -17,8 +18,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  AreaChart,
-  Area,
+  PieChart,
+  Pie,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -102,6 +104,29 @@ export default function ActivityPage() {
     100,
     Math.round((chartData.length / days) * 100),
   );
+
+  // Calculate meal distribution for pie chart
+  const mealDistribution = history.reduce(
+    (acc: Record<string, number>, log) => {
+      log.meals?.forEach((meal) => {
+        acc[meal.mealType] = (acc[meal.mealType] || 0) + meal.calories;
+      });
+      return acc;
+    },
+    {},
+  );
+
+  const pieData = Object.entries(mealDistribution).map(([name, value]) => ({
+    name,
+    value,
+  }));
+
+  const PIE_COLORS = {
+    Breakfast: "#3b82f6",
+    Lunch: "#10b981",
+    Dinner: "#065E32",
+    Snack: "#f59e0b",
+  };
 
   if (isLoading) {
     return (
@@ -258,42 +283,35 @@ export default function ActivityPage() {
         <Card className="rounded-[2rem] border-none shadow-2xl shadow-slate-200/50 dark:shadow-none overflow-hidden bg-white dark:bg-slate-900">
           <CardHeader className="p-8 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
             <CardTitle className="text-lg font-bold">
-              Calorie Consumption Trend
+              Meal Type Distribution
             </CardTitle>
-            <CardDescription>Daily caloric intake fluctuations</CardDescription>
+            <CardDescription>
+              Caloric contribution by meal category
+            </CardDescription>
           </CardHeader>
-          <CardContent className="p-8 h-[350px]">
+          <CardContent className="p-8 h-[350px] flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient
-                    id="colorCalories"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop offset="5%" stopColor="#065E32" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#065E32" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#e2e8f0"
-                />
-                <XAxis
-                  dataKey="date"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fontWeight: "500" }}
-                  dy={10}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fontWeight: "500" }}
-                />
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={70}
+                  outerRadius={100}
+                  paddingAngle={8}
+                  dataKey="value"
+                >
+                  {pieData.map((entry: any, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={
+                        PIE_COLORS[entry.name as keyof typeof PIE_COLORS] ||
+                        "#cbd5e1"
+                      }
+                      className="outline-none"
+                    />
+                  ))}
+                </Pie>
                 <Tooltip
                   contentStyle={{
                     borderRadius: "24px",
@@ -301,16 +319,15 @@ export default function ActivityPage() {
                     boxShadow: "0 20px 50px rgba(0,0,0,0.1)",
                     padding: "12px 16px",
                   }}
+                  formatter={(value: any) => [`${value} kcal`, "Calories"]}
                 />
-                <Area
-                  type="monotone"
-                  dataKey="calories"
-                  stroke="#065E32"
-                  strokeWidth={4}
-                  fillOpacity={1}
-                  fill="url(#colorCalories)"
+                <Legend
+                  verticalAlign="middle"
+                  align="right"
+                  layout="vertical"
+                  iconType="circle"
                 />
-              </AreaChart>
+              </PieChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
@@ -360,22 +377,25 @@ export default function ActivityPage() {
                   dataKey="protein"
                   name="Protein (g)"
                   fill="#3b82f6"
-                  radius={[6, 6, 0, 0]}
-                  barSize={12}
+                  stackId="a"
+                  radius={[0, 0, 0, 0]}
+                  barSize={20}
                 />
                 <Bar
                   dataKey="carbs"
                   name="Carbs (g)"
                   fill="#10b981"
-                  radius={[6, 6, 0, 0]}
-                  barSize={12}
+                  stackId="a"
+                  radius={[0, 0, 0, 0]}
+                  barSize={20}
                 />
                 <Bar
                   dataKey="fat"
                   name="Fat (g)"
                   fill="#f59e0b"
+                  stackId="a"
                   radius={[6, 6, 0, 0]}
-                  barSize={12}
+                  barSize={20}
                 />
               </BarChart>
             </ResponsiveContainer>

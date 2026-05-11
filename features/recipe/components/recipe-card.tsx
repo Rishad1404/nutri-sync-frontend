@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, ChefHat, Flame, Star } from "lucide-react";
+import { Clock, ChefHat, Flame, Star, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,13 +53,23 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         {recipe.nutrition?.calories && (
           <div className="absolute bottom-4 left-4 right-4 z-10">
             <div className="bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl p-3 flex items-center justify-between shadow-xl">
-              <div className="flex items-center gap-2">
-                <Flame className="w-4 h-4 text-orange-500" />
-                <span className="text-xs font-black text-slate-900 dark:text-white">{recipe.nutrition.calories} kcal</span>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1.5">
+                  <Flame className="w-3.5 h-3.5 text-orange-500" />
+                  <span className="text-[10px] font-black text-slate-900 dark:text-white">
+                    {recipe.nutrition.calories} kcal
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Eye className="w-3.5 h-3.5 text-blue-500" />
+                  <span className="text-[10px] font-black text-slate-900 dark:text-white">
+                    {recipe.viewCount || 0}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-1 text-[10px] font-bold text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-1 text-[10px] font-bold text-slate-600 dark:text-slate-300 bg-white/50 dark:bg-black/30 px-2 py-0.5 rounded-lg">
                 <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                {recipe.rating}
+                {recipe.rating ? recipe.rating.toFixed(1) : "0.0"}
               </div>
             </div>
           </div>

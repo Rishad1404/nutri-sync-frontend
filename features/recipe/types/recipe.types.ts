@@ -14,10 +14,15 @@ export const recipeSchema = z.object({
   ingredients: z.array(z.any()),
   steps: z.array(z.any()),
   nutrition: z.any().nullable(),
+  createdBy: z.object({
+    id: z.string(),
+    name: z.string(),
+    image: z.string().nullable(),
+  }).optional(),
   isPublished: z.boolean(),
-  rating: z.number(),
-  reviewCount: z.number(),
-  viewCount: z.number(),
+  rating: z.number().optional(),
+  reviewCount: z.number().optional(),
+  viewCount: z.number().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

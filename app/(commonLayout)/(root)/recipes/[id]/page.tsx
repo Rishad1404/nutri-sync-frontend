@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   Trophy,
   Utensils,
+  Eye,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -90,6 +91,39 @@ export default async function RecipeDetailPage({
               <h1 className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white leading-[1.1] mb-6 drop-shadow-sm">
                 {recipe.title}
               </h1>
+
+              <div className="flex flex-wrap items-center gap-6">
+                {/* Author Info */}
+                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20">
+                  <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#44B74C]">
+                    <Image 
+                      src={recipe.createdBy?.image || `https://i.pravatar.cc/100?u=${recipe.createdBy?.id}`} 
+                      alt={recipe.createdBy?.name || "Author"} 
+                      width={32} 
+                      height={32} 
+                    />
+                  </div>
+                  <span className="text-sm font-bold text-slate-800 dark:text-white">
+                    By {recipe.createdBy?.name || "NutriSync Chef"}
+                  </span>
+                </div>
+
+                {/* Rating */}
+                <div className="flex items-center gap-2 bg-amber-500/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-amber-500/20">
+                  <Trophy className="w-4 h-4 text-amber-500" />
+                  <span className="text-sm font-black text-amber-600 dark:text-amber-400">
+                    {recipe.rating ? recipe.rating.toFixed(1) : "0.0"} <span className="text-[10px] font-bold opacity-60">/ 5.0</span>
+                  </span>
+                </div>
+
+                {/* View Count */}
+                <div className="flex items-center gap-2 bg-blue-500/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-blue-500/20">
+                  <Eye className="w-4 h-4 text-blue-500" />
+                  <span className="text-sm font-black text-blue-600 dark:text-blue-400">
+                    {recipe.viewCount || 0} <span className="text-[10px] font-bold opacity-60 uppercase tracking-tighter">Views</span>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -166,7 +200,7 @@ export default async function RecipeDetailPage({
                         {ingredient.name}
                       </span>
                       <span className="text-xs font-black text-[#065E32] dark:text-[#44B74C] bg-[#065E32]/5 dark:bg-[#44B74C]/10 px-3 py-1 rounded-full">
-                        {ingredient.amount} {ingredient.unit}
+                        {ingredient.quantity} {ingredient.unit}
                       </span>
                     </div>
                   ))}
@@ -249,7 +283,7 @@ export default async function RecipeDetailPage({
                   },
                   {
                     label: "Carbs",
-                    value: `${recipe.nutrition?.carbohydrates || 0}g`,
+                    value: `${recipe.nutrition?.carbs || 0}g`,
                     color: "bg-amber-500/10 text-amber-500",
                   },
                   {

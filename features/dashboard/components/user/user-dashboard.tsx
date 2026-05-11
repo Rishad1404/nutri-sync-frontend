@@ -6,6 +6,7 @@ import {
   useUserAnalytics,
   useUserStats,
 } from "../../queries/dashboard.queries";
+import { useRouter } from "next/navigation";
 import { useDailyLogs } from "@/features/nutrition/queries/nutrition.queries";
 import LogNutritionModal from "@/features/nutrition/components/log-nutrition-modal";
 import {
@@ -41,6 +42,7 @@ const COLORS = ["#065E32", "#44B74C", "#FFBB28"];
 export default function UserDashboard() {
   const { data: stats, isLoading: statsLoading } = useUserStats();
   const { data: analytics, isLoading: analyticsLoading } = useUserAnalytics();
+  const router = useRouter();
 
   const today = new Date().toISOString().split("T")[0];
   const { data: dailyLog, isLoading: logsLoading } = useDailyLogs(today);
@@ -125,30 +127,43 @@ export default function UserDashboard() {
       {/* Stats Grid */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {statCards.map((card, index) => (
-          <Link
+          <motion.div
             key={index}
-            href={
-              card.title === "Active Meal Plans"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ 
+              scale: 1.05,
+              translateY: -5,
+              transition: { duration: 0.2, ease: "easeOut" }
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              const href = card.title === "Active Meal Plans"
                 ? "/dashboard/meal-plans"
                 : card.title === "Nutrition Logs"
                   ? "/dashboard/activity"
-                  : "#"
-            }
-            className="group transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                  : null;
+              if (href) router.push(href);
+            }}
+            className={cn(
+              "group cursor-pointer",
+              card.title === "Weight Progress" || card.title === "Daily Calories" ? "cursor-default" : ""
+            )}
           >
-            <Card className="border-border/40 bg-card/40 backdrop-blur-md shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:border-primary/20">
+            <Card className="border-none bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-emerald-500/10 group-hover:border-emerald-500/20">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between space-x-4">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-emerald-500 transition-colors">
                       {card.title}
                     </p>
                     <div className="flex items-baseline gap-1">
-                      <h3 className="text-2xl font-bold tracking-tight">
+                      <h3 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
                         {card.value}
                       </h3>
                       {card.target && (
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs font-bold text-slate-400">
                           {card.target}
                         </span>
                       )}
@@ -156,7 +171,7 @@ export default function UserDashboard() {
                   </div>
                   <div
                     className={cn(
-                      "p-3 rounded-2xl transition-transform group-hover:rotate-12",
+                      "p-3 rounded-2xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-6",
                       card.bgColor,
                     )}
                   >
@@ -165,7 +180,7 @@ export default function UserDashboard() {
                 </div>
               </CardContent>
             </Card>
-          </Link>
+          </motion.div>
         ))}
       </div>
 
@@ -203,7 +218,7 @@ export default function UserDashboard() {
                   stroke="#f1f5f9"
                 />
                 <XAxis
-                  dataKey="date"
+                  dataKey="name"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 12, fill: "#64748b" }}
@@ -224,7 +239,7 @@ export default function UserDashboard() {
                 />
                 <Area
                   type="monotone"
-                  dataKey="calories"
+                  dataKey="value"
                   stroke="#44B74C"
                   strokeWidth={4}
                   fillOpacity={1}
