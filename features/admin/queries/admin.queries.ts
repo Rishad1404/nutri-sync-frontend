@@ -38,6 +38,27 @@ export type AdminAnalytics = {
   systemEngagement: { date: string; count: number }[];
 };
 
+export type AdminRecipe = {
+  id: string;
+  title: string;
+  description: string;
+  image?: string;
+  cuisine: string;
+  difficulty: string;
+  cookingTime: number;
+  calories: number;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  createdById: string;
+  createdBy: {
+    id: string;
+    name: string;
+    image?: string;
+    role: string;
+  };
+};
+
 // --- Queries ---
 
 export const useAdminUsersQuery = () => {
@@ -45,7 +66,7 @@ export const useAdminUsersQuery = () => {
     queryKey: ["admin", "users"],
     queryFn: async () => {
       const data = await api.get("/admin/users");
-      return data.data as AdminUser[];
+      return (data.data as AdminUser[]) || [];
     },
   });
 };
@@ -55,7 +76,7 @@ export const useAdminStatsQuery = () => {
     queryKey: ["admin", "stats"],
     queryFn: async () => {
       const data = await api.get("/admin/stats");
-      return data.data as AdminStats;
+      return (data.data as AdminStats) || { users: 0, recipes: 0, mealPlans: 0 };
     },
   });
 };
@@ -65,7 +86,19 @@ export const useAdminAnalyticsQuery = () => {
     queryKey: ["admin", "analytics"],
     queryFn: async () => {
       const data = await api.get("/admin/analytics");
-      return data.data as AdminAnalytics;
+      return (data.data as AdminAnalytics) || { userGrowth: [], cuisineDistribution: [], systemEngagement: [] };
+    },
+  });
+};
+
+export const useAdminRecipesQuery = (query: any = {}) => {
+  return useQuery({
+    queryKey: ["admin", "recipes", query],
+    queryFn: async () => {
+      const response = await api.get<any>("/recipes", {
+        params: { ...query, limit: 100 },
+      });
+      return response.data?.data || [];
     },
   });
 };
@@ -150,6 +183,25 @@ export const useDeleteUserMutation = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to delete user");
+    },
+  });
+};
+
+export const useDeleteRecipeMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (recipeId: string) => {
+      const data = await api.delete(`/recipes/${recipeId}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "recipes"] });
+      queryClient.invalidateQueries({ queryKey: ["recipes"] });
+      toast.success("Recipe removed from platform successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to delete recipe");
     },
   });
 };

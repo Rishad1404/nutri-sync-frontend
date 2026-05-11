@@ -17,6 +17,7 @@ import {
   Tag,
   User,
   Users,
+  Utensils,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -66,6 +67,7 @@ const iconMap = {
   Apple,
   Brain,
   Activity,
+  Utensils,
 } as const;
 
 export type IconMapKey = keyof typeof iconMap;

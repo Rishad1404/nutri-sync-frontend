@@ -33,30 +33,20 @@ export const ADMIN: DashboardSidebarMenuGroup[] = [
         url: "/dashboard/admin/users",
         icon: "Users" as IconMapKey,
       },
-      {
-        title: "Nutritional Content",
-        url: "/dashboard/admin/content",
-        icon: "Apple" as IconMapKey,
-      },
-      {
-        title: "Plan Categories",
-        url: "/dashboard/admin/categories",
-        icon: "Tag" as IconMapKey,
-      },
     ],
   },
   {
-    label: "Media & Assets",
+    label: "Content Moderation",
     items: [
       {
-        title: "Image Library",
-        url: "/dashboard/admin/media/images",
-        icon: "Image" as IconMapKey,
+        title: "My Recipes",
+        url: "/dashboard/my-recipes",
+        icon: "Utensils" as IconMapKey,
       },
       {
-        title: "Video Tutorials",
-        url: "/dashboard/admin/media/videos",
-        icon: "Clapperboard" as IconMapKey,
+        title: "Recipe Management",
+        url: "/dashboard/admin/recipes",
+        icon: "Shield" as IconMapKey,
       },
     ],
   },
