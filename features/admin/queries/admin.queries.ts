@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axiosInstance from "@/lib/axios";
+import { api } from "@/lib/axios/http";
 import { toast } from "sonner";
 
 // --- Types ---
@@ -23,6 +24,7 @@ export type AdminStats = {
 export type AdminAnalytics = {
   userGrowth: { date: string; count: number }[];
   cuisineDistribution: { label: string; count: number }[];
+  systemEngagement: { date: string; count: number }[];
 };
 
 // --- Queries ---
@@ -31,7 +33,7 @@ export const useAdminUsersQuery = () => {
   return useQuery({
     queryKey: ["admin", "users"],
     queryFn: async () => {
-      const { data } = await axiosInstance.get("/admin/users");
+      const data = await api.get("/admin/users");
       return data.data as AdminUser[];
     },
   });
@@ -41,7 +43,7 @@ export const useAdminStatsQuery = () => {
   return useQuery({
     queryKey: ["admin", "stats"],
     queryFn: async () => {
-      const { data } = await axiosInstance.get("/admin/stats");
+      const data = await api.get("/admin/stats");
       return data.data as AdminStats;
     },
   });
@@ -51,7 +53,7 @@ export const useAdminAnalyticsQuery = () => {
   return useQuery({
     queryKey: ["admin", "analytics"],
     queryFn: async () => {
-      const { data } = await axiosInstance.get("/admin/analytics");
+      const data = await api.get("/admin/analytics");
       return data.data as AdminAnalytics;
     },
   });
@@ -63,8 +65,14 @@ export const useUpdateUserStatusMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ userId, status }: { userId: string; status: string }) => {
-      const { data } = await axiosInstance.patch(`/admin/users/${userId}/status`, { status });
+    mutationFn: async ({
+      userId,
+      status,
+    }: {
+      userId: string;
+      status: string;
+    }) => {
+      const data = await api.patch(`/admin/users/${userId}/status`, { status });
       return data;
     },
     onSuccess: () => {
@@ -72,7 +80,9 @@ export const useUpdateUserStatusMutation = () => {
       toast.success("User status updated successfully");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to update user status");
+      toast.error(
+        error.response?.data?.message || "Failed to update user status",
+      );
     },
   });
 };
@@ -82,7 +92,7 @@ export const useUpdateUserRoleMutation = () => {
 
   return useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
-      const { data } = await axiosInstance.patch(`/admin/users/${userId}/role`, { role });
+      const data = await api.patch(`/admin/users/${userId}/role`, { role });
       return data;
     },
     onSuccess: () => {
@@ -90,7 +100,9 @@ export const useUpdateUserRoleMutation = () => {
       toast.success("User role updated successfully");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to update user role");
+      toast.error(
+        error.response?.data?.message || "Failed to update user role",
+      );
     },
   });
 };
@@ -100,7 +112,7 @@ export const useDeleteUserMutation = () => {
 
   return useMutation({
     mutationFn: async (userId: string) => {
-      const { data } = await axiosInstance.delete(`/admin/users/${userId}`);
+      const data = await api.delete(`/admin/users/${userId}`);
       return data;
     },
     onSuccess: () => {
