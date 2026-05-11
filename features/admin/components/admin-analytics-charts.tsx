@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useAdminAnalyticsQuery } from "../queries/admin.queries";
+import { useState, useEffect } from "react";
 import {
   XAxis,
   YAxis,
@@ -46,8 +48,13 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function AdminAnalyticsCharts() {
   const { data: analytics, isLoading } = useAdminAnalyticsQuery();
+  const [mounted, setMounted] = useState(false);
 
-  if (isLoading) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (isLoading || !mounted) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
         <div className="lg:col-span-2 h-96 rounded-[2rem] bg-slate-100 dark:bg-slate-800 animate-pulse" />

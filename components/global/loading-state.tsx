@@ -29,7 +29,8 @@ export function LoadingState({ compact = false }: { compact?: boolean }) {
               alt="NutriSync Logo"
               width={compact ? 100 : 140}
               height={compact ? 40 : 56}
-              className="h-auto opacity-70 grayscale-[0.5]"
+              className="w-auto h-auto opacity-70 grayscale-[0.5]"
+              style={{ aspectRatio: "auto" }}
               priority
             />
           </div>

@@ -28,16 +28,7 @@ export default function AdminUsersPage() {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-3"
         >
-          <div className="flex -space-x-3 items-center mr-4 hidden sm:flex">
-             {[1,2,3,4].map(i => (
-               <div key={i} className="w-10 h-10 rounded-full border-4 border-white dark:border-slate-900 bg-slate-100 shadow-sm" />
-             ))}
-             <div className="w-10 h-10 rounded-full border-4 border-white dark:border-slate-900 bg-emerald-500 flex items-center justify-center text-[10px] font-black text-white shadow-lg">9k+</div>
-          </div>
-          <Button className="h-12 px-6 rounded-2xl bg-[#065E32] hover:bg-[#044a27] text-white font-bold gap-2 shadow-lg shadow-emerald-500/20">
-            <UserPlus className="w-4 h-4" />
-            Invite Admin
-          </Button>
+          {/* Action buttons removed as requested */}
         </motion.div>
       </div>
 

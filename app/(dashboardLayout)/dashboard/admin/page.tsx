@@ -2,13 +2,9 @@
 
 import AdminStatsCards from "@/features/admin/components/admin-stats-cards";
 import AdminAnalyticsCharts from "@/features/admin/components/admin-analytics-charts";
-import UserManagementTable from "@/features/admin/components/user-management-table";
 import {
-  Shield,
   LayoutDashboard,
-  Settings2,
-  Download,
-  Plus,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -71,6 +67,3 @@ export default function AdminPage() {
     </div>
   );
 }
-
-// Inline re-import to fix undefined component
-import { TrendingUp } from "lucide-react";

@@ -9,10 +9,21 @@ export type AdminUser = {
   id: string;
   name: string;
   email: string;
+  emailVerified: boolean;
   role: "USER" | "ADMIN";
   status: "ACTIVE" | "BLOCKED" | "DELETED";
   image?: string;
   createdAt: string;
+  updatedAt: string;
+  age?: number;
+  gender?: string;
+  weight?: number;
+  height?: number;
+  activityLevel?: string;
+  calorieTarget: number;
+  dietaryPreferences: string[];
+  allergies: string[];
+  goals?: string;
 };
 
 export type AdminStats = {
@@ -103,6 +114,24 @@ export const useUpdateUserRoleMutation = () => {
       toast.error(
         error.response?.data?.message || "Failed to update user role",
       );
+    },
+  });
+};
+
+export const useUpdateUserMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ userId, data }: { userId: string; data: any }) => {
+      const response = await api.patch(`/admin/users/${userId}`, data);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      toast.success("User updated successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to update user");
     },
   });
 };

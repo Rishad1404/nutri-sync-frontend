@@ -10,3 +10,8 @@ export async function getChatHistory() {
   const response = await api.get<ChatMessage[]>("/chat/history");
   return response;
 }
+
+export async function deleteChatHistory() {
+  const response = await api.delete("/chat/history");
+  return response;
+}

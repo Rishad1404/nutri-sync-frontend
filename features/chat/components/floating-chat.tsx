@@ -6,6 +6,11 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  useSendMessageMutation,
+  useChatHistoryQuery,
+  useDeleteChatHistoryMutation,
+} from "../queries/chat.queries";
+import {
   MessageCircle,
   X,
   Send,
@@ -14,13 +19,10 @@ import {
   Sparkles,
   Maximize2,
   ChevronDown,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  useSendMessageMutation,
-  useChatHistoryQuery,
-} from "../queries/chat.queries";
 import { useMeQuery } from "@/features/auth/queries/auth.querie";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
@@ -35,10 +37,12 @@ export default function FloatingChat() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const { data: user } = useMeQuery();
-  const { data: history, isLoading: historyLoading } = useChatHistoryQuery(
+  const { data: history, isLoading: historyLoading, isFetching: historyFetching } = useChatHistoryQuery(
+    user?.id,
     !!user && isOpen,
   );
   const sendMessageMutation = useSendMessageMutation();
+  const deleteHistoryMutation = useDeleteChatHistoryMutation();
 
   // Scroll to bottom on new message
   useEffect(() => {
@@ -49,14 +53,23 @@ export default function FloatingChat() {
 
   // Sync with server history when it loads
   useEffect(() => {
-    if (history?.data) {
+    // Only sync if we have data AND we are not currently fetching fresh data for a new user/id
+    if (history?.data && !historyFetching) {
       const formattedHistory = (history.data as any[]).flatMap((chat: any) => [
         { role: "user", content: chat.message },
         { role: "assistant", content: chat.response },
       ]);
       setLocalHistory(formattedHistory as any);
+    } else if (!user) {
+      // Clear history if no user is logged in (guest mode or logged out)
+      setLocalHistory([]);
     }
-  }, [history]);
+  }, [history, user, historyFetching]);
+
+  // Force clear when user changes to prevent cross-session leaks
+  useEffect(() => {
+    setLocalHistory([]);
+  }, [user?.id]);
 
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -113,6 +126,26 @@ export default function FloatingChat() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
+                {(localHistory.length > 0 || (history?.data && history.data.length > 0)) && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to clear your chat history?")) {
+                        deleteHistoryMutation.mutate();
+                      }
+                    }}
+                    disabled={deleteHistoryMutation.isPending}
+                    className="h-8 w-8 text-white hover:bg-white/10 rounded-full"
+                    title="Clear history"
+                  >
+                    {deleteHistoryMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="icon"
