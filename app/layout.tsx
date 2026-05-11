@@ -6,6 +6,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import FloatingChat from "@/features/chat/components/floating-chat";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default function RootLayout({
           <QueryProviders>
             <TooltipProvider>
               {children}
+              <FloatingChat />
             </TooltipProvider>
           </QueryProviders>
           <Toaster theme="system" position="top-right" richColors />
