@@ -54,20 +54,23 @@ export default function RegisterForm() {
       </div>
 
       {/* Form */}
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3.5">
         <FormProvider {...form}>
           <InputField
+            className="grid gap-1"
             name="name"
             label="Full name"
             placeholder="Your full name"
           />
           <InputField
+            className="grid gap-1"
             name="email"
             label="Email address"
             placeholder="you@example.com"
             type="email"
           />
           <InputField
+            className="grid gap-1"
             name="password"
             label="Password"
             type="password"
@@ -78,7 +81,7 @@ export default function RegisterForm() {
             type="submit"
             size="lg"
             disabled={form.formState.isSubmitting}
-            className="w-full h-12 bg-[#065E32] hover:bg-[#044a27] text-white font-semibold rounded-xl shadow-lg shadow-[#065E32]/25 transition-all hover:shadow-xl hover:scale-[1.01] mt-2"
+            className="w-full h-11 bg-[#065E32] hover:bg-[#044a27] text-white font-semibold rounded-xl shadow-lg shadow-[#065E32]/25 transition-all hover:shadow-xl hover:scale-[1.01]"
           >
             {form.formState.isSubmitting ? (
               <span className="flex items-center gap-2">
@@ -93,11 +96,11 @@ export default function RegisterForm() {
           {/* Divider */}
           <div className="relative my-2">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-[#065E32]/10" />
+              <span className="w-full border-t border-slate-100 dark:border-slate-800" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
+            <div className="relative flex justify-center text-[9px] uppercase tracking-tighter font-black">
+              <span className="bg-white dark:bg-slate-950 px-2 text-slate-300">
+                Alternative Sign Up
               </span>
             </div>
           </div>
@@ -105,13 +108,13 @@ export default function RegisterForm() {
           <SocialLoginButtons />
 
           {/* Footer */}
-          <p className="text-center text-sm text-muted-foreground pt-2">
+          <p className="text-center text-xs text-muted-foreground pt-1">
             Already have an account?{" "}
             <Link
               href="/login"
-              className="text-[#065E32] hover:text-[#44B74C] font-semibold transition-colors"
+              className="text-[#065E32] hover:text-[#44B74C] font-black transition-colors"
             >
-              Sign in
+              Sign in here
             </Link>
           </p>
         </FormProvider>
