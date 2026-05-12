@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ArrowRight, Zap } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { HeroChatAnimation } from "./hero-chat-animation";
 
 export default function Hero() {
   return (
@@ -85,94 +86,10 @@ export default function Hero() {
           className="relative flex justify-center md:justify-end"
         >
           {/* Main Central Card */}
-          <div className="relative z-10 w-full max-w-[420px] aspect-[4/5] bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-2xl overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+          <div className="relative z-10 w-full max-w-[420px] aspect-4/5 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-2xl overflow-hidden group">
+            <div className="absolute inset-0 bg-linear-to-br from-emerald-500/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
-            <img
-              src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=800"
-              alt="Healthy Food"
-              className="w-full h-[60%] object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-
-            <div className="p-8 relative">
-              <div className="flex justify-between items-center mb-6">
-                <h4 className="text-xl font-black text-slate-900 dark:text-white">
-                  Daily Summary
-                </h4>
-                <div className="px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">
-                  Live Sync
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: "75%" }}
-                    transition={{ duration: 1.5, delay: 0.5 }}
-                    className="h-full bg-emerald-500"
-                  />
-                </div>
-                <div className="flex justify-between text-xs font-bold text-slate-400">
-                  <span>Calories Goal</span>
-                  <span>1,850 / 2,400 kcal</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Floating Elements Over the Main Card */}
-            <motion.div
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-10 -left-12 p-5 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 z-20"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
-                  <Zap className="w-5 h-5 fill-amber-600" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    Energy
-                  </p>
-                  <p className="text-sm font-black text-slate-900 dark:text-white">
-                    High Vitality
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              animate={{ y: [0, 20, 0] }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 0.5,
-              }}
-              className="absolute bottom-20 -right-12 p-5 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 z-20"
-            >
-              <div className="flex items-center gap-4">
-                <div className="text-center">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    Protein
-                  </p>
-                  <p className="text-lg font-black text-emerald-600">124g</p>
-                </div>
-                <div className="w-px h-8 bg-slate-100 dark:bg-slate-700" />
-                <div className="text-center">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    Water
-                  </p>
-                  <p className="text-lg font-black text-blue-600">2.8L</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Background Decorative Rings */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-0 opacity-20 pointer-events-none">
-            <div className="absolute inset-0 border-2 border-emerald-500 rounded-full animate-[spin_20s_linear_infinite]" />
-            <div className="absolute inset-4 border-2 border-dashed border-blue-500 rounded-full animate-[spin_30s_linear_infinite_reverse]" />
+            <HeroChatAnimation />
           </div>
         </motion.div>
       </div>

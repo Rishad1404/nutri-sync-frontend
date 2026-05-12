@@ -55,6 +55,11 @@ export const ADMIN: DashboardSidebarMenuGroup[] = [
         icon: "Activity" as IconMapKey,
       },
       {
+        title: "Saved Items",
+        url: "/dashboard/favorites",
+        icon: "Heart" as IconMapKey,
+      },
+      {
         title: "AI Analyzer",
         url: "/dashboard/ai",
         icon: "Brain" as IconMapKey,

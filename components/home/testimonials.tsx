@@ -34,7 +34,7 @@ const testimonials = [
 export default function Testimonials() {
   return (
     <section className="py-32 relative overflow-hidden">
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-full h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent" />
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-full h-px bg-linear-to-r from-transparent via-slate-200 dark:via-slate-800 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="text-center mb-24">
@@ -57,7 +57,7 @@ export default function Testimonials() {
               transition={{ delay: index * 0.1 }}
               className="bg-white dark:bg-slate-800 p-10 rounded-[3rem] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 relative group"
             >
-              <Quote className="absolute top-8 right-10 w-12 h-12 text-slate-100 dark:text-slate-700 -z-0" />
+              <Quote className="absolute top-8 right-10 w-12 h-12 text-slate-100 dark:text-slate-700 z-0" />
 
               <div className="flex gap-1 mb-6 relative z-10">
                 {[...Array(t.rating)].map((_, i) => (

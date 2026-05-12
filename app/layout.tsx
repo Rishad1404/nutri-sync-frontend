@@ -19,8 +19,12 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "NutriSync - Professional Nutrition Management",
-  description: "AI-powered healthy and natural nutrition platform.",
+  title: "NutriSync | AI-Powered Personalized Nutrition",
+  description: "Transform your health with NutriSync. AI-driven meal planning, recipe discovery, and nutritional tracking tailored just for you.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

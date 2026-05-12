@@ -35,11 +35,11 @@ export default function LoginForm({
     const demo = searchParams?.demo;
     if (demo === "user") {
       form.setValue("email", "test@example.com");
-      form.setValue("password", "12345678");
+      form.setValue("password", "User123@");
       form.handleSubmit(onSubmit)();
     } else if (demo === "admin") {
       form.setValue("email", "admin@nutrisync.com");
-      form.setValue("password", "admin123@");
+      form.setValue("password", "Admin123@");
       form.handleSubmit(onSubmit)();
     }
   }, [searchParams]);
@@ -127,7 +127,7 @@ export default function LoginForm({
                 variant="outline"
                 onClick={() => {
                   form.setValue("email", "test@example.com");
-                  form.setValue("password", "12345678");
+                  form.setValue("password", "User123@");
                   form.handleSubmit(onSubmit)();
                 }}
                 className="h-9 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-50 text-[10px] font-black uppercase tracking-wider"
@@ -139,7 +139,7 @@ export default function LoginForm({
                 variant="outline"
                 onClick={() => {
                   form.setValue("email", "admin@nutrisync.com");
-                  form.setValue("password", "admin123@");
+                  form.setValue("password", "Admin123@");
                   form.handleSubmit(onSubmit)();
                 }}
                 className="h-9 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-50 text-[10px] font-black uppercase tracking-wider"

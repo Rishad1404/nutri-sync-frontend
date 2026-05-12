@@ -20,7 +20,11 @@ export const recipeColumns: ColumnDef<Recipe>[] = [
           {row.getValue("title")}
         </span>
         <span className="text-xs text-muted-foreground line-clamp-1">
-          {row.original.description}
+          {row.original.description?.split(" ").slice(0, 10).join(" ")}
+          {row.original.description &&
+          row.original.description.split(" ").length > 10
+            ? "..."
+            : ""}
         </span>
       </div>
     ),

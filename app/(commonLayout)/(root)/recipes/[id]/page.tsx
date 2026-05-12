@@ -69,7 +69,7 @@ export default async function RecipeDetailPage({
             <ChefHat className="w-32 h-32 text-slate-300 dark:text-slate-800" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-slate-950 via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-linear-to-t from-white dark:from-slate-950 via-transparent to-black/20" />
 
         {/* Navigation Overlays */}
         <div className="absolute top-8 left-8 z-20">
@@ -96,11 +96,14 @@ export default async function RecipeDetailPage({
                 {/* Author Info */}
                 <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/20">
                   <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-[#44B74C]">
-                    <Image 
-                      src={recipe.createdBy?.image || `https://i.pravatar.cc/100?u=${recipe.createdBy?.id}`} 
-                      alt={recipe.createdBy?.name || "Author"} 
-                      width={32} 
-                      height={32} 
+                    <Image
+                      src={
+                        recipe.createdBy?.image ||
+                        `https://i.pravatar.cc/100?u=${recipe.createdBy?.id}`
+                      }
+                      alt={recipe.createdBy?.name || "Author"}
+                      width={32}
+                      height={32}
                     />
                   </div>
                   <span className="text-sm font-bold text-slate-800 dark:text-white">
@@ -112,7 +115,10 @@ export default async function RecipeDetailPage({
                 <div className="flex items-center gap-2 bg-amber-500/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-amber-500/20">
                   <Trophy className="w-4 h-4 text-amber-500" />
                   <span className="text-sm font-black text-amber-600 dark:text-amber-400">
-                    {recipe.rating ? recipe.rating.toFixed(1) : "0.0"} <span className="text-[10px] font-bold opacity-60">/ 5.0</span>
+                    {recipe.rating ? recipe.rating.toFixed(1) : "0.0"}{" "}
+                    <span className="text-[10px] font-bold opacity-60">
+                      / 5.0
+                    </span>
                   </span>
                 </div>
 
@@ -120,7 +126,10 @@ export default async function RecipeDetailPage({
                 <div className="flex items-center gap-2 bg-blue-500/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-blue-500/20">
                   <Eye className="w-4 h-4 text-blue-500" />
                   <span className="text-sm font-black text-blue-600 dark:text-blue-400">
-                    {recipe.viewCount || 0} <span className="text-[10px] font-bold opacity-60 uppercase tracking-tighter">Views</span>
+                    {recipe.viewCount || 0}{" "}
+                    <span className="text-[10px] font-bold opacity-60 uppercase tracking-tighter">
+                      Views
+                    </span>
                   </span>
                 </div>
               </div>
@@ -259,7 +268,7 @@ export default async function RecipeDetailPage({
                 </div>
 
                 <div className="space-y-4">
-                  <AddToMealPlanButton recipeId={recipe.id} />
+                  <AddToMealPlanButton recipe={recipe} />
                   <p className="text-[10px] text-center font-bold text-slate-500 uppercase tracking-widest px-4">
                     Adding to your meal plan will automatically sync with your
                     health goals.
