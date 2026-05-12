@@ -1,12 +1,14 @@
 import Link from "next/link";
+import Image from "next/image";
+import logo from "@/public/logo.png";
 import { Leaf } from "lucide-react";
 
 const footerLinks = {
   product: [
-    { name: "Features", href: "/features" },
-    { name: "Meal Plans", href: "/meal-plans" },
-    { name: "AI Assistant", href: "/ai-assistant" },
-    { name: "Pricing", href: "/pricing" },
+    { name: "Features", href: "#features" },
+    { name: "Meal Plans", href: "/dashboard/meal-plans" },
+    { name: "AI Assistant", href: "/dashboard/ai" },
+    { name: "Pricing", href: "#pricing" },
   ],
   company: [
     { name: "About Us", href: "/about" },
@@ -28,16 +30,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           {/* Brand Column */}
           <div className="md:col-span-1 space-y-5">
-            <Link href="/" className="flex items-center gap-2 group w-fit">
-              <div className="w-8 h-8 bg-[#065E32] rounded-lg flex items-center justify-center shadow-sm transition-transform group-hover:scale-105">
-                <Leaf className="w-4 h-4 text-white" />
-              </div>
-              <span
-                className="text-xl font-bold text-[#065E32] dark:text-[#44B74C]"
-                style={{ fontFamily: "'Outfit', 'Poppins', sans-serif" }}
-              >
-                NutriSync
-              </span>
+            <Link href="/" className="flex items-center group w-fit">
+              <Image
+                src={logo}
+                alt="NutriSync"
+                width={120}
+                height={120}
+                className="object-contain transition-transform group-hover:scale-105"
+              />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Empowering your health journey with AI-driven nutrition plans,

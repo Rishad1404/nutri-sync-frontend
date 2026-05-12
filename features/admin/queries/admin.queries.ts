@@ -42,12 +42,22 @@ export type AdminRecipe = {
   id: string;
   title: string;
   description: string;
-  image?: string;
+  imageUrl?: string;
   cuisine: string;
   difficulty: string;
-  cookingTime: number;
-  calories: number;
-  isDeleted: boolean;
+  cookTime: number;
+  prepTime: number;
+  servings: number;
+  ingredients: any[];
+  steps: any[];
+  nutrition?: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber?: number;
+  };
+  isPublished: boolean;
   createdAt: string;
   updatedAt: string;
   createdById: string;
@@ -98,7 +108,7 @@ export const useAdminRecipesQuery = (query: any = {}) => {
       const response = await api.get<any>("/recipes", {
         params: { ...query, limit: 100 },
       });
-      return response.data?.data || [];
+      return response.data || [];
     },
   });
 };
@@ -202,6 +212,30 @@ export const useDeleteRecipeMutation = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to delete recipe");
+    },
+  });
+};
+export const useUpdateRecipeMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      recipeId,
+      data,
+    }: {
+      recipeId: string;
+      data: any;
+    }) => {
+      const response = await api.patch(`/recipes/${recipeId}`, data);
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "recipes"] });
+      queryClient.invalidateQueries({ queryKey: ["recipes"] });
+      toast.success("Recipe updated successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to update recipe");
     },
   });
 };

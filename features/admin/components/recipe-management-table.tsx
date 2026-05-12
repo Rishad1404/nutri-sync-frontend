@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import {
-  Calendar,
   ChefHat,
   Clock,
   Edit,
@@ -12,11 +13,11 @@ import {
   Flame,
   Globe,
   MoreVertical,
-  Search,
   Trash2,
   User,
   Utensils,
   XCircle,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,34 +30,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { format } from "date-fns";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { DataTable } from "@/components/dashboard/data-table";
 import { toast } from "sonner";
 import {
   AdminRecipe,
   useAdminRecipesQuery,
   useDeleteRecipeMutation,
+  useUpdateRecipeMutation,
 } from "../queries/admin.queries";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { RecipeForm } from "@/features/recipe/components/recipe-form";
 
 export default function RecipeManagementTable() {
-  const { data: allRecipes = [], isLoading } = useAdminRecipesQuery();
+  const router = useRouter();
+  const { data: recipes = [], isLoading } = useAdminRecipesQuery();
   const deleteMutation = useDeleteRecipeMutation();
-
-  // Filter out recipes created by Admins
-  const recipes = useMemo(
-    () =>
-      allRecipes.filter(
-        (r: { createdBy: { role: string } }) => r.createdBy?.role !== "ADMIN",
-      ),
-    [allRecipes],
-  );
+  const updateMutation = useUpdateRecipeMutation();
 
   const [selectedRecipe, setSelectedRecipe] = useState<AdminRecipe | null>(
     null,
   );
   const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const handleDelete = async () => {
@@ -78,27 +81,32 @@ export default function RecipeManagementTable() {
           const recipe = row.original;
           return (
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative shrink-0">
-                {recipe.image ? (
+              <div className="h-12 w-12 rounded-[1rem] overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative shrink-0 shadow-sm">
+                {recipe.imageUrl ? (
                   <Image
-                    src={recipe.image}
+                    src={recipe.imageUrl}
                     alt={recipe.title}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Utensils className="w-5 h-5 text-slate-400" />
+                    <Utensils className="w-5 h-5 text-slate-300" />
                   </div>
                 )}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-sm font-black text-slate-900 dark:text-white truncate">
+                <span className="text-sm font-black text-slate-900 dark:text-white truncate tracking-tight">
                   {recipe.title}
                 </span>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight truncate">
-                  {recipe.cuisine} • {recipe.difficulty}
-                </span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-900/20 px-1.5 py-0.5 rounded-md">
+                    {recipe.cuisine}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">
+                    • {recipe.difficulty}
+                  </span>
+                </div>
               </div>
             </div>
           );
@@ -109,49 +117,91 @@ export default function RecipeManagementTable() {
         header: "Author",
         cell: ({ row }) => {
           const author = row.original.createdBy;
+          const isAdmin = author?.role === "ADMIN";
           return (
-            <div className="flex items-center gap-2.5">
-              <div className="h-7 w-7 rounded-full bg-[#065E32]/10 dark:bg-[#065E32]/20 flex items-center justify-center border border-[#065E32]/20">
-                <User className="w-3.5 h-3.5 text-[#065E32] dark:text-[#4ade80]" />
+            <div className="flex items-center gap-3">
+              <div
+                className={cn(
+                  "h-8 w-8 rounded-full flex items-center justify-center border shrink-0",
+                  isAdmin
+                    ? "bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
+                    : "bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700",
+                )}
+              >
+                {author?.image ? (
+                  <img
+                    src={author.image}
+                    alt=""
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <User
+                    className={cn(
+                      "w-4 h-4",
+                      isAdmin ? "text-amber-600" : "text-slate-400",
+                    )}
+                  />
+                )}
               </div>
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                {author?.name || "System"}
-              </span>
+              <div className="flex flex-col min-w-0">
+                <span className="text-[11px] font-black text-slate-700 dark:text-slate-300 truncate">
+                  {author?.name || "Anonymous User"}
+                </span>
+                {isAdmin && (
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <ShieldCheck className="w-2.5 h-2.5 text-amber-500" />
+                    <span className="text-[8px] font-black text-amber-600 uppercase tracking-tighter">
+                      Master Admin
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           );
         },
       },
       {
-        accessorKey: "calories",
+        accessorKey: "nutrition.calories",
         header: "Nutrition",
         cell: ({ row }) => (
-          <div className="flex flex-col gap-0.5">
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-              <Flame className="w-3 h-3 text-orange-500" />
-              {row.getValue("calories")}{" "}
-              <span className="text-[10px] text-slate-400 font-normal">
-                kcal
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 px-1.5 py-0.5 rounded-md">
+                <Flame className="w-2.5 h-2.5" />
+                <span className="text-[10px] font-black uppercase">
+                  {row.original.nutrition?.calories || 0} kcal
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 text-slate-400 px-1">
+              <Clock className="w-2.5 h-2.5" />
+              <span className="text-[9px] font-bold uppercase tracking-tight">
+                {row.original.cookTime} min cook
               </span>
-            </span>
-            <span className="text-[10px] font-medium text-slate-500 flex items-center gap-1.5">
-              <Clock className="w-3 h-3 opacity-50" />
-              {row.original.cookingTime} mins
-            </span>
+            </div>
           </div>
         ),
       },
       {
-        accessorKey: "createdAt",
-        header: "Published",
+        accessorKey: "isPublished",
+        header: "Status",
         cell: ({ row }) => (
-          <span className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 opacity-50" />
-            {format(new Date(row.getValue("createdAt")), "MMM dd, yyyy")}
-          </span>
+          <Badge
+            variant="outline"
+            className={cn(
+              "text-[10px] font-black uppercase tracking-widest",
+              row.original.isPublished
+                ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                : "bg-slate-50 text-slate-400 border-slate-200",
+            )}
+          >
+            {row.original.isPublished ? "Live" : "Draft"}
+          </Badge>
         ),
       },
       {
         id: "actions",
+        header: "Action",
         cell: ({ row }) => {
           const recipe = row.original;
           return (
@@ -160,7 +210,7 @@ export default function RecipeManagementTable() {
                 render={
                   <Button
                     variant="ghost"
-                    className="h-8 w-8 p-0 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="h-9 w-9 p-0 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                   >
                     <MoreVertical className="h-4 w-4 text-slate-500" />
                   </Button>
@@ -168,39 +218,75 @@ export default function RecipeManagementTable() {
               />
               <DropdownMenuContent
                 align="end"
-                className="w-52 rounded-xl p-1.5 shadow-xl border-slate-200 dark:border-slate-800"
+                className="w-56 rounded-2xl p-2 shadow-2xl border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl"
               >
                 <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-3 py-2">
+                  <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 px-3 py-3">
                     Moderation
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
+                  <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 mb-1" />
 
                   <DropdownMenuItem
                     onClick={() => {
                       setSelectedRecipe(recipe);
                       setIsViewOpen(true);
                     }}
-                    className="rounded-lg gap-2 cursor-pointer py-2 px-3 focus:bg-emerald-50 dark:focus:bg-emerald-900/20"
+                    className="rounded-xl gap-3 cursor-pointer py-2.5 px-3 focus:bg-emerald-50 dark:focus:bg-emerald-900/20"
                   >
-                    <Eye className="w-4 h-4 text-emerald-600" />
-                    <span className="text-sm font-semibold">
-                      Inspect Recipe
-                    </span>
+                    <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                      <Eye className="w-4 h-4 text-emerald-600" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                        Inspect Details
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-medium">
+                        Full overview
+                      </span>
+                    </div>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setSelectedRecipe(recipe);
+                      setIsEditOpen(true);
+                    }}
+                    className="rounded-xl gap-3 cursor-pointer py-2.5 px-3 focus:bg-amber-50 dark:focus:bg-amber-900/20 mt-1"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                      <Edit className="w-4 h-4 text-amber-600" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                        Modify Content
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-medium">
+                        Inline editing
+                      </span>
+                    </div>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
 
-                <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
+                <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800 my-1" />
 
                 <DropdownMenuItem
                   onClick={() => {
                     setSelectedRecipe(recipe);
                     setIsDeleteOpen(true);
                   }}
-                  className="rounded-lg gap-2 cursor-pointer py-2 px-3 focus:bg-rose-50 dark:focus:bg-rose-900/20 text-rose-600"
+                  className="rounded-xl gap-3 cursor-pointer py-2.5 px-3 focus:bg-rose-50 dark:focus:bg-rose-900/20 text-rose-600"
                 >
-                  <Trash2 className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Remove Content</span>
+                  <div className="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center">
+                    <Trash2 className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold">
+                      Remove Permanently
+                    </span>
+                    <span className="text-[10px] opacity-70 font-medium">
+                      Delete from platform
+                    </span>
+                  </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -212,23 +298,21 @@ export default function RecipeManagementTable() {
   );
 
   return (
-    <div className="space-y-4">
-      <div className="relative group">
-        <DataTable
-          columns={columns}
-          data={recipes}
-          loading={isLoading}
-          searchKey="title"
-        />
-      </div>
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <DataTable
+        columns={columns}
+        data={recipes}
+        loading={isLoading}
+        searchKey="title"
+      />
 
       {/* View Recipe Details Modal */}
       <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
         <DialogContent className="max-w-3xl rounded-[2.5rem] border-none bg-white dark:bg-slate-900 shadow-2xl p-0 overflow-hidden">
           <div className="relative h-64 w-full">
-            {selectedRecipe?.image ? (
+            {selectedRecipe?.imageUrl ? (
               <Image
-                src={selectedRecipe.image}
+                src={selectedRecipe.imageUrl}
                 alt={selectedRecipe.title}
                 fill
                 className="object-cover"
@@ -257,7 +341,7 @@ export default function RecipeManagementTable() {
             </Button>
           </div>
 
-          <div className="p-8 space-y-8">
+          <div className="p-8 space-y-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
             <div className="grid grid-cols-3 gap-6">
               <div className="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800 flex flex-col items-center text-center gap-2">
                 <Flame className="w-6 h-6 text-orange-500" />
@@ -266,7 +350,7 @@ export default function RecipeManagementTable() {
                     Calories
                   </p>
                   <p className="text-lg font-black text-slate-900 dark:text-white">
-                    {selectedRecipe?.calories} kcal
+                    {selectedRecipe?.nutrition?.calories} kcal
                   </p>
                 </div>
               </div>
@@ -277,7 +361,7 @@ export default function RecipeManagementTable() {
                     Cook Time
                   </p>
                   <p className="text-lg font-black text-slate-900 dark:text-white">
-                    {selectedRecipe?.cookingTime} mins
+                    {selectedRecipe?.cookTime} mins
                   </p>
                 </div>
               </div>
@@ -322,6 +406,34 @@ export default function RecipeManagementTable() {
               </p>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Recipe Modal */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="max-w-5xl h-[90vh] overflow-y-auto rounded-[2.5rem] p-8 border-none bg-white dark:bg-slate-900 shadow-2xl">
+          <DialogHeader className="mb-6">
+            <DialogTitle className="text-2xl font-black">
+              Edit Recipe Content
+            </DialogTitle>
+            <DialogDescription className="font-medium text-slate-500">
+              Update platform-wide recipe data directly.
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedRecipe && (
+            <div className="pb-8">
+              <RecipeForm
+                initialData={selectedRecipe as any}
+                recipeId={selectedRecipe.id}
+                onSuccess={() => {
+                  setIsEditOpen(false);
+                  setSelectedRecipe(null);
+                  toast.success("Platform content updated");
+                }}
+              />
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 

@@ -19,12 +19,23 @@ const COMMON_SETTINGS: DashboardSidebarMenuGroup = {
   ],
 };
 
+const SITE_NAVIGATION: DashboardSidebarMenuGroup = {
+  label: "Site Navigation",
+  items: [
+    {
+      title: "Back to Home",
+      url: "/",
+      icon: "Home" as IconMapKey,
+    },
+  ],
+};
+
 export const ADMIN: DashboardSidebarMenuGroup[] = [
   {
     label: "Admin Console",
     items: [
       {
-        title: "Overview",
+        title: "Admin Dashboard",
         url: "/dashboard/admin",
         icon: "LayoutDashboard" as IconMapKey,
       },
@@ -32,6 +43,21 @@ export const ADMIN: DashboardSidebarMenuGroup[] = [
         title: "User Management",
         url: "/dashboard/admin/users",
         icon: "Users" as IconMapKey,
+      },
+    ],
+  },
+  {
+    label: "Self Care",
+    items: [
+      {
+        title: "My Activity",
+        url: "/dashboard/activity",
+        icon: "Activity" as IconMapKey,
+      },
+      {
+        title: "AI Analyzer",
+        url: "/dashboard/ai",
+        icon: "Brain" as IconMapKey,
       },
     ],
   },
@@ -51,21 +77,17 @@ export const ADMIN: DashboardSidebarMenuGroup[] = [
     ],
   },
   {
-    label: "System",
+    label: "Nutrition",
     items: [
       {
-        title: "Roles & Security",
-        url: "/dashboard/admin/roles",
-        icon: "Shield" as IconMapKey,
-      },
-      {
-        title: "Support Tickets",
-        url: "/dashboard/admin/support",
-        icon: "LifeBuoy" as IconMapKey,
+        title: "Meal Plans",
+        url: "/dashboard/meal-plans",
+        icon: "Apple" as IconMapKey,
       },
     ],
   },
   COMMON_SETTINGS,
+  SITE_NAVIGATION,
 ];
 
 export const USER: DashboardSidebarMenuGroup[] = [
@@ -73,7 +95,7 @@ export const USER: DashboardSidebarMenuGroup[] = [
     label: "Personal",
     items: [
       {
-        title: "Dashboard",
+        title: "My Dashboard",
         url: "/dashboard",
         icon: "LayoutDashboard" as IconMapKey,
       },
@@ -104,12 +126,13 @@ export const USER: DashboardSidebarMenuGroup[] = [
       },
       {
         title: "AI Analyzer",
-        url: "/dashboard/analyzer",
+        url: "/dashboard/ai",
         icon: "Brain" as IconMapKey,
       },
     ],
   },
   COMMON_SETTINGS,
+  SITE_NAVIGATION,
 ];
 
 export const sidebar = {

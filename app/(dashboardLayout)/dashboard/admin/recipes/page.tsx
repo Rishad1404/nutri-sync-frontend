@@ -49,7 +49,7 @@ export default function AdminRecipesPage() {
                 Content Database
               </h2>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-0.5">
-                Manage {`{count}`} registered recipes
+                Live platform content
               </p>
             </div>
             <div className="flex items-center gap-4">

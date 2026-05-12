@@ -2,7 +2,7 @@
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -77,42 +77,103 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Right Side: Floating Mockup */}
+        {/* Right Side: Exciting Dynamic Visuals */}
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.2 }}
           className="relative flex justify-center md:justify-end"
         >
-          <motion.div
-            animate={{ y: [0, -15, 0] }}
-            transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-            className="relative w-full max-w-md aspect-square rounded-3xl bg-gradient-to-tr from-[#065E32]/10 to-[#44B74C]/20 border border-white/20 shadow-2xl backdrop-blur-sm p-6 flex flex-col gap-4 overflow-hidden"
-          >
-            <div className="w-full h-32 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-4 flex flex-col justify-between">
-              <div className="w-1/3 h-4 bg-muted rounded-full" />
-              <div className="flex gap-2">
-                <div className="w-10 h-10 rounded-full bg-[#44B74C]/20" />
-                <div className="flex-1 flex flex-col gap-2 justify-center">
-                  <div className="w-full h-2 bg-muted rounded-full" />
-                  <div className="w-2/3 h-2 bg-muted rounded-full" />
+          {/* Main Central Card */}
+          <div className="relative z-10 w-full max-w-[420px] aspect-[4/5] bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-100 dark:border-slate-800 shadow-2xl overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+
+            <img
+              src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&q=80&w=800"
+              alt="Healthy Food"
+              className="w-full h-[60%] object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+
+            <div className="p-8 relative">
+              <div className="flex justify-between items-center mb-6">
+                <h4 className="text-xl font-black text-slate-900 dark:text-white">
+                  Daily Summary
+                </h4>
+                <div className="px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest animate-pulse">
+                  Live Sync
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: "75%" }}
+                    transition={{ duration: 1.5, delay: 0.5 }}
+                    className="h-full bg-emerald-500"
+                  />
+                </div>
+                <div className="flex justify-between text-xs font-bold text-slate-400">
+                  <span>Calories Goal</span>
+                  <span>1,850 / 2,400 kcal</span>
                 </div>
               </div>
             </div>
-            <div className="flex gap-4">
-              <div className="flex-1 h-24 bg-[#065E32] rounded-2xl shadow-sm p-4 text-white flex flex-col justify-between">
-                <span className="text-xs opacity-80">Calories</span>
-                <span className="text-2xl font-bold">1,420</span>
+
+            {/* Floating Elements Over the Main Card */}
+            <motion.div
+              animate={{ y: [0, -20, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-10 -left-12 p-5 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 z-20"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
+                  <Zap className="w-5 h-5 fill-amber-600" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Energy
+                  </p>
+                  <p className="text-sm font-black text-slate-900 dark:text-white">
+                    High Vitality
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 h-24 bg-[#44B74C] rounded-2xl shadow-sm p-4 text-white flex flex-col justify-between">
-                <span className="text-xs opacity-80">Protein</span>
-                <span className="text-2xl font-bold">85g</span>
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, 20, 0] }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.5,
+              }}
+              className="absolute bottom-20 -right-12 p-5 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 z-20"
+            >
+              <div className="flex items-center gap-4">
+                <div className="text-center">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Protein
+                  </p>
+                  <p className="text-lg font-black text-emerald-600">124g</p>
+                </div>
+                <div className="w-px h-8 bg-slate-100 dark:bg-slate-700" />
+                <div className="text-center">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Water
+                  </p>
+                  <p className="text-lg font-black text-blue-600">2.8L</p>
+                </div>
               </div>
-            </div>
-            <div className="w-full h-full bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-4 flex items-center justify-center">
-              <div className="w-3/4 h-3/4 border-4 border-muted rounded-full border-t-[#065E32] border-r-[#44B74C] rotate-45" />
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
+
+          {/* Background Decorative Rings */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-0 opacity-20 pointer-events-none">
+            <div className="absolute inset-0 border-2 border-emerald-500 rounded-full animate-[spin_20s_linear_infinite]" />
+            <div className="absolute inset-4 border-2 border-dashed border-blue-500 rounded-full animate-[spin_30s_linear_infinite_reverse]" />
+          </div>
         </motion.div>
       </div>
     </section>

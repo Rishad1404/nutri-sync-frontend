@@ -24,9 +24,8 @@ const loggedOutLinks = [
   { name: "Home", href: "/" },
   { name: "Recipes", href: "/recipes" },
   { name: "How It Works", href: "/how-it-works" },
-  { name: "Chat", href: "/chat" },
+  { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/contact" },
-  { name: "AI Analyzer", href: "/ai-analyzer" },
 ];
 
 const loggedInLinks = [
@@ -34,9 +33,10 @@ const loggedInLinks = [
   { name: "Recipes", href: "/recipes" },
   { name: "Dashboard", href: "/dashboard" },
   { name: "How It Works", href: "/how-it-works" },
-  { name: "Chat", href: "/chat" },
-  { name: "Contact", href: "/contact" },
   { name: "AI Analyzer", href: "/dashboard/ai" },
+  { name: "Chat", href: "/chat" },
+  { name: "Blog", href: "/blog" },
+  { name: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {

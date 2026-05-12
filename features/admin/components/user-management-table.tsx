@@ -290,6 +290,7 @@ export default function UserManagementTable() {
       },
       {
         id: "actions",
+        header: "Action",
         cell: ({ row }) => {
           const user = row.original;
           return (

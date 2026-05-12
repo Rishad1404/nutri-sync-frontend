@@ -102,7 +102,7 @@ export function DashboardSidebar({ menu = [], user }: DashboardSidebarProps) {
   const isCollapsed = state === "collapsed";
 
   const isActive = (url: string) =>
-    url === "/dashboard" || url === "/dashboard/admin"
+    url === "/" || url === "/dashboard" || url === "/dashboard/admin"
       ? pathname === url
       : pathname.startsWith(url);
 
