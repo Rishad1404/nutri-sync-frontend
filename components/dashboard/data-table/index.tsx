@@ -25,6 +25,7 @@ import {
 
 import { DataTablePagination } from "./pagination";
 import { DataTableToolbar } from "./toolbar";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -70,8 +71,9 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <DataTableToolbar table={table} searchKey={searchKey} />
-      <div className="rounded-2xl border border-border bg-card/50 backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-md hover:shadow-primary/5">
-        <Table>
+      <div className="rounded-2xl border border-border bg-card/50 backdrop-blur-sm transition-all duration-300 hover:shadow-md hover:shadow-primary/5">
+        <div className="overflow-x-auto">
+          <Table>
           <TableHeader className="bg-muted/50">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
@@ -82,7 +84,10 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className="h-14 px-6 text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                      className={cn(
+                        "h-14 px-6 text-xs font-bold uppercase tracking-wider text-muted-foreground",
+                        (header.column.columnDef.meta as any)?.className,
+                      )}
                     >
                       {header.isPlaceholder
                         ? null
@@ -117,7 +122,13 @@ export function DataTable<TData, TValue>({
                   className="hover:bg-muted/30 border-border/40 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-6 py-4 text-sm font-medium">
+                    <TableCell
+                      key={cell.id}
+                      className={cn(
+                        "px-6 py-4 text-sm font-medium",
+                        (cell.column.columnDef.meta as any)?.className,
+                      )}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -137,7 +148,8 @@ export function DataTable<TData, TValue>({
               </TableRow>
             )}
           </TableBody>
-        </Table>
+          </Table>
+        </div>
       </div>
       <DataTablePagination table={table} />
     </div>

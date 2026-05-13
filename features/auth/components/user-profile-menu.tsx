@@ -26,15 +26,14 @@ export default function UserProfileMenu() {
   if (!user) {
     return (
       <Button
-        render={
-          <Link href="/login" />
-        }
+        asChild
         variant="ghost"
         size="icon"
         aria-label="Sign in"
-        nativeButton={false}
       >
-        <User />
+        <Link href="/login">
+          <User />
+        </Link>
       </Button>
     );
   }

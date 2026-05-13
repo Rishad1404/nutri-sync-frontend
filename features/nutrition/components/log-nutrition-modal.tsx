@@ -69,7 +69,7 @@ export default function LogNutritionModal({ children }: { children?: React.React
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger} />
+      <DialogTrigger render={trigger as React.ReactElement} />
       <DialogContent className="sm:max-w-[450px] rounded-3xl p-8">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-[#065E32] flex items-center gap-2">

@@ -204,6 +204,7 @@ export default function UserManagementTable() {
             </Badge>
           );
         },
+        meta: { className: "hidden md:table-cell" },
       },
       {
         accessorKey: "status",
@@ -228,6 +229,7 @@ export default function UserManagementTable() {
             </div>
           );
         },
+        meta: { className: "hidden sm:table-cell" },
       },
       {
         accessorKey: "emailVerified",
@@ -248,6 +250,7 @@ export default function UserManagementTable() {
             </div>
           );
         },
+        meta: { className: "hidden lg:table-cell" },
       },
       {
         accessorKey: "calorieTarget",
@@ -260,6 +263,7 @@ export default function UserManagementTable() {
             </span>
           </div>
         ),
+        meta: { className: "hidden xl:table-cell" },
       },
       {
         id: "metrics",
@@ -277,6 +281,7 @@ export default function UserManagementTable() {
             </div>
           );
         },
+        meta: { className: "hidden lg:table-cell" },
       },
       {
         accessorKey: "createdAt",
@@ -287,6 +292,7 @@ export default function UserManagementTable() {
             {format(new Date(row.getValue("createdAt")), "MMM dd, yyyy")}
           </span>
         ),
+        meta: { className: "hidden md:table-cell" },
       },
       {
         id: "actions",

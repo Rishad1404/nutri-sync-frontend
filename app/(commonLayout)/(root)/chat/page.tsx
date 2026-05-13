@@ -36,7 +36,7 @@ function ChatContainer() {
   const router = useRouter();
 
   const { data: user, isLoading: userLoading } = useMeQuery();
-  const { data: history, isLoading: historyLoading } = useChatHistoryQuery(!!user);
+  const { data: history, isLoading: historyLoading } = useChatHistoryQuery(user?.id, !!user);
   const sendMessageMutation = useSendMessageMutation();
 
   // Route Protection

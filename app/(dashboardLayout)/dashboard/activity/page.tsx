@@ -196,13 +196,6 @@ export default function ActivityPage() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button
-            variant="outline"
-            className="rounded-2xl border-slate-200 bg-white hover:bg-slate-50 shadow-sm font-semibold"
-          >
-            <Filter className="w-4 h-4 mr-2 text-[#065E32]" />
-            Filter
-          </Button>
         </div>
       </div>
 
@@ -432,16 +425,16 @@ export default function ActivityPage() {
                   <TableHead className="h-16 font-bold text-slate-900 dark:text-slate-200">
                     Calories
                   </TableHead>
-                  <TableHead className="h-16 font-bold text-slate-900 dark:text-slate-200">
+                  <TableHead className="h-16 font-bold text-slate-900 dark:text-slate-200 hidden md:table-cell">
                     Protein
                   </TableHead>
-                  <TableHead className="h-16 font-bold text-slate-900 dark:text-slate-200">
+                  <TableHead className="h-16 font-bold text-slate-900 dark:text-slate-200 hidden md:table-cell">
                     Carbs
                   </TableHead>
-                  <TableHead className="h-16 font-bold text-slate-900 dark:text-slate-200">
+                  <TableHead className="h-16 font-bold text-slate-900 dark:text-slate-200 hidden md:table-cell">
                     Fat
                   </TableHead>
-                  <TableHead className="h-16 font-bold text-slate-900 dark:text-slate-200">
+                  <TableHead className="h-16 font-bold text-slate-900 dark:text-slate-200 hidden lg:table-cell">
                     Meals
                   </TableHead>
                   <TableHead className="text-right pr-10 h-16 font-bold text-slate-900 dark:text-slate-200">
@@ -472,16 +465,16 @@ export default function ActivityPage() {
                         kcal
                       </span>
                     </TableCell>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium hidden md:table-cell">
                       {log.totalProtein || 0}g
                     </TableCell>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium hidden md:table-cell">
                       {log.totalCarbs || 0}g
                     </TableCell>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium hidden md:table-cell">
                       {log.totalFat || 0}g
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden lg:table-cell">
                       <div className="flex -space-x-2">
                         {log.meals?.slice(0, 3).map((_, i) => (
                           <div
@@ -545,7 +538,7 @@ export default function ActivityPage() {
               </div>
             </DialogHeader>
 
-            <div className="grid grid-cols-4 gap-4 mt-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
               <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-md">
                 <p className="text-[10px] font-bold uppercase opacity-60">
                   Calories
@@ -640,10 +633,6 @@ export default function ActivityPage() {
               className="rounded-2xl px-8 font-bold"
             >
               Close
-            </Button>
-            <Button className="rounded-2xl px-8 bg-[#065E32] hover:bg-[#044a27] text-white font-bold shadow-lg shadow-green-900/20">
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Full Report
             </Button>
           </div>
         </DialogContent>

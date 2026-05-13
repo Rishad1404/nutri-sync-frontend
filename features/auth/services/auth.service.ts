@@ -5,7 +5,7 @@ import { setTokenInCookies } from "@/lib/utils/token";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-const BASE_API_URL = envVars.API_URL;
+const BASE_API_URL = envVars.SERVER_API_URL;
 
 export async function getNewTokensWithRefreshToken(
   refreshToken: string,
@@ -57,28 +57,36 @@ export async function getNewTokensWithRefreshToken(
 }
 
 export async function getUserInfo() {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-  const sessionToken = cookieStore.get("better-auth.session_token")?.value;
+  try {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+    const sessionToken = 
+      cookieStore.get("better-auth.session_token")?.value || 
+      cookieStore.get("__Secure-better-auth.session_token")?.value;
 
-  if (!accessToken) {
+    if (!accessToken && !sessionToken) {
+      return null;
+    }
+
+    const res = await fetch(`${BASE_API_URL}/auth/me`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `accessToken=${accessToken || ""}; better-auth.session_token=${sessionToken || ""}`,
+        Authorization: `Bearer ${accessToken || sessionToken || ""}`,
+      },
+    });
+
+    if (!res.ok) {
+      return null;
+    }
+
+    const { data } = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching user info:", error);
     return null;
   }
-
-  const res = await fetch(`${BASE_API_URL}/auth/me`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
-    },
-  });
-
-  if (!res.ok) {
-    return null;
-  }
-
-  const { data } = await res.json();
-  return data;
 }
 
 export async function logoutAction() {

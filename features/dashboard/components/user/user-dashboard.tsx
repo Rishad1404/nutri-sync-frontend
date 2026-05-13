@@ -184,13 +184,13 @@ export default function UserDashboard() {
         ))}
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-8 grid-cols-1 xl:grid-cols-3">
         {/* Calorie Trend Chart */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4 }}
-          className="lg:col-span-2 rounded-3xl border bg-white dark:bg-slate-900 p-8 shadow-sm"
+          className="xl:col-span-2 rounded-3xl border bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm"
         >
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -255,7 +255,7 @@ export default function UserDashboard() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5 }}
-          className="rounded-3xl border bg-white dark:bg-slate-900 p-8 shadow-sm flex flex-col"
+          className="rounded-3xl border bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm flex flex-col"
         >
           <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
             Macro Distribution
@@ -315,19 +315,19 @@ export default function UserDashboard() {
       </div>
 
       {/* Recent Logs & AI Recommendation */}
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-8 grid-cols-1 xl:grid-cols-2">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="rounded-3xl border bg-white dark:bg-slate-900 p-8 shadow-sm"
+          className="rounded-3xl border bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm"
         >
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white">
               Recent Meals
             </h3>
             <Link
-              href="/logs"
+              href="/dashboard/activity"
               className="text-sm font-semibold text-[#065E32] hover:underline flex items-center"
             >
               View Log History <ChevronRight className="w-4 h-4" />
@@ -375,7 +375,7 @@ export default function UserDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="rounded-3xl bg-gradient-to-br from-[#065E32] to-[#44B74C] p-8 shadow-xl text-white relative overflow-hidden group"
+          className="rounded-3xl bg-gradient-to-br from-[#065E32] to-[#44B74C] p-6 sm:p-8 shadow-xl text-white relative overflow-hidden group"
         >
           {/* Decorative shapes */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl" />

@@ -27,7 +27,9 @@ const axiosInstance = async () => {
 
   // Get tokens for the headers
   const accessToken = cookieStore.get("accessToken")?.value;
-  const sessionToken = cookieStore.get("better-auth.session_token")?.value;
+  const sessionToken = 
+    cookieStore.get("better-auth.session_token")?.value || 
+    cookieStore.get("__Secure-better-auth.session_token")?.value;
 
   // Build the cookie string manually for the server-side request
   const cookieHeader = cookieStore
@@ -36,7 +38,7 @@ const axiosInstance = async () => {
     .join("; ");
 
   return axios.create({
-    baseURL: envVars.API_URL,
+    baseURL: envVars.SERVER_API_URL,
     timeout: 30000,
     headers: {
       "Content-Type": "application/json",

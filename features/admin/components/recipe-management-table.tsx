@@ -159,6 +159,7 @@ export default function RecipeManagementTable() {
             </div>
           );
         },
+        meta: { className: "hidden md:table-cell" },
       },
       {
         accessorKey: "nutrition.calories",
@@ -181,6 +182,7 @@ export default function RecipeManagementTable() {
             </div>
           </div>
         ),
+        meta: { className: "hidden sm:table-cell" },
       },
       {
         accessorKey: "isPublished",
@@ -198,6 +200,7 @@ export default function RecipeManagementTable() {
             {row.original.isPublished ? "Live" : "Draft"}
           </Badge>
         ),
+        meta: { className: "hidden lg:table-cell" },
       },
       {
         id: "actions",

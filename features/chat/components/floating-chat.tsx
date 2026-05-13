@@ -37,10 +37,11 @@ export default function FloatingChat() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const { data: user } = useMeQuery();
-  const { data: history, isLoading: historyLoading, isFetching: historyFetching } = useChatHistoryQuery(
-    user?.id,
-    !!user && isOpen,
-  );
+  const {
+    data: history,
+    isLoading: historyLoading,
+    isFetching: historyFetching,
+  } = useChatHistoryQuery(user?.id, !!user && isOpen);
   const sendMessageMutation = useSendMessageMutation();
   const deleteHistoryMutation = useDeleteChatHistoryMutation();
 
@@ -126,12 +127,17 @@ export default function FloatingChat() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                {(localHistory.length > 0 || (history?.data && history.data.length > 0)) && (
+                {(localHistory.length > 0 ||
+                  (history?.data && history.data.length > 0)) && (
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => {
-                      if (window.confirm("Are you sure you want to clear your chat history?")) {
+                      if (
+                        window.confirm(
+                          "Are you sure you want to clear your chat history?",
+                        )
+                      ) {
                         deleteHistoryMutation.mutate();
                       }
                     }}

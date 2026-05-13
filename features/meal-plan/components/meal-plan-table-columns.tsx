@@ -38,6 +38,7 @@ export const mealPlanColumns: ColumnDef<MealPlan>[] = [
       <DataTableColumnHeader column={column} title="Calories" />
     ),
     cell: ({ row }) => <span>{row.getValue("totalCalorieGoal")} kcal</span>,
+    meta: { className: "hidden sm:table-cell" },
   },
   {
     accessorKey: "startDate",
@@ -47,6 +48,7 @@ export const mealPlanColumns: ColumnDef<MealPlan>[] = [
     cell: ({ row }) => {
       return <span>{format(new Date(row.getValue("startDate")), "PPP")}</span>;
     },
+    meta: { className: "hidden md:table-cell" },
   },
   {
     accessorKey: "endDate",
@@ -56,6 +58,7 @@ export const mealPlanColumns: ColumnDef<MealPlan>[] = [
     cell: ({ row }) => {
       return <span>{format(new Date(row.getValue("endDate")), "PPP")}</span>;
     },
+    meta: { className: "hidden lg:table-cell" },
   },
   {
     accessorKey: "createdAt",
@@ -65,6 +68,7 @@ export const mealPlanColumns: ColumnDef<MealPlan>[] = [
     cell: ({ row }) => {
       return <span>{format(new Date(row.getValue("createdAt")), "PP")}</span>;
     },
+    meta: { className: "hidden xl:table-cell" },
   },
   {
     id: "actions",

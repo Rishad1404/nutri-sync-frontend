@@ -39,6 +39,7 @@ export const recipeColumns: ColumnDef<Recipe>[] = [
         {row.getValue("cuisine")}
       </Badge>
     ),
+    meta: { className: "hidden md:table-cell" },
   },
   {
     accessorKey: "difficulty",
@@ -62,6 +63,7 @@ export const recipeColumns: ColumnDef<Recipe>[] = [
         </Badge>
       );
     },
+    meta: { className: "hidden sm:table-cell" },
   },
   {
     id: "nutrition",
@@ -84,6 +86,7 @@ export const recipeColumns: ColumnDef<Recipe>[] = [
         </div>
       );
     },
+    meta: { className: "hidden lg:table-cell" },
   },
   {
     id: "time",
@@ -99,6 +102,7 @@ export const recipeColumns: ColumnDef<Recipe>[] = [
         </div>
       );
     },
+    meta: { className: "hidden md:table-cell" },
   },
   {
     accessorKey: "isPublished",
@@ -119,6 +123,7 @@ export const recipeColumns: ColumnDef<Recipe>[] = [
         </Badge>
       );
     },
+    meta: { className: "hidden lg:table-cell" },
   },
   {
     accessorKey: "createdAt",
@@ -130,6 +135,7 @@ export const recipeColumns: ColumnDef<Recipe>[] = [
         {format(new Date(row.getValue("createdAt")), "MMM dd, yyyy")}
       </span>
     ),
+    meta: { className: "hidden xl:table-cell" },
   },
   {
     id: "actions",
