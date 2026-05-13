@@ -33,9 +33,9 @@ export type AdminStats = {
 };
 
 export type AdminAnalytics = {
-  userGrowth: { date: string; count: number }[];
-  cuisineDistribution: { label: string; count: number }[];
-  systemEngagement: { date: string; count: number }[];
+  userGrowth: { name: string; value: number }[];
+  cuisineDistribution: { name: string; value: number }[];
+  systemEngagement: { name: string; value: number }[];
 };
 
 export type AdminRecipe = {

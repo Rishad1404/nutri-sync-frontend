@@ -100,7 +100,7 @@ export default function AdminAnalyticsCharts() {
                   opacity={0.4}
                 />
                 <XAxis
-                  dataKey="date"
+                  dataKey="name"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 10, fontWeight: 700, fill: "#94A3B8" }}
@@ -115,7 +115,7 @@ export default function AdminAnalyticsCharts() {
                 <Area
                   name="Users"
                   type="natural"
-                  dataKey="count"
+                  dataKey="value"
                   stroke="#065E32"
                   strokeWidth={3}
                   fillOpacity={1}
@@ -154,8 +154,8 @@ export default function AdminAnalyticsCharts() {
                   innerRadius={65}
                   outerRadius={85}
                   paddingAngle={5}
-                  dataKey="count"
-                  nameKey="label"
+                  dataKey="value"
+                  nameKey="name"
                   stroke="none"
                 >
                   {(analytics?.cuisineDistribution || []).map(
@@ -181,8 +181,8 @@ export default function AdminAnalyticsCharts() {
                     className="w-2 h-2 rounded-full"
                     style={{ backgroundColor: COLORS[i % COLORS.length] }}
                   />
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">
-                    {item.label}
+                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">
+                    {item.name}
                   </span>
                 </div>
               ))}
@@ -228,19 +228,18 @@ export default function AdminAnalyticsCharts() {
                 stroke="#E2E8F0"
                 opacity={0.4}
               />
-              <XAxis
-                dataKey="date"
+               <XAxis
+                dataKey="name"
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 10, fontWeight: 700, fill: "#94A3B8" }}
-                tickFormatter={(val) => val.split("-").slice(1).join("/")}
               />
               <YAxis hide />
               <Tooltip content={<CustomTooltip />} />
               <Area
                 name="Activity"
                 type="monotone"
-                dataKey="count"
+                dataKey="value"
                 stroke="#10B981"
                 strokeWidth={2}
                 fillOpacity={1}

@@ -5,7 +5,9 @@ import AdminAnalyticsCharts from "@/features/admin/components/admin-analytics-ch
 import {
   LayoutDashboard,
   TrendingUp,
+  Plus
 } from "lucide-react";
+import LogNutritionModal from "@/features/nutrition/components/log-nutrition-modal";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
@@ -29,6 +31,12 @@ export default function AdminPage() {
             </p>
           </div>
         </div>
+        <LogNutritionModal>
+          <Button className="bg-[#065E32] hover:bg-[#044a27] text-white rounded-2xl px-6 h-12 gap-2 shadow-lg shadow-green-600/20 transition-all active:scale-95">
+            <Plus className="w-5 h-5" />
+            Log Nutrition
+          </Button>
+        </LogNutritionModal>
       </div>
 
       {/* Quick Stats Section */}

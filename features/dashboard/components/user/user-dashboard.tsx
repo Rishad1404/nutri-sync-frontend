@@ -391,7 +391,10 @@ export default function UserDashboard() {
               breakfast could help sustain your energy levels throughout the
               morning. Try adding a boiled egg or some Greek yogurt!"
             </p>
-            <Button className="w-full bg-white text-[#065E32] hover:bg-green-50 font-bold h-12 rounded-2xl transition-transform active:scale-95">
+            <Button 
+              onClick={() => router.push("/dashboard/ai")}
+              className="w-full bg-white text-[#065E32] hover:bg-green-50 font-bold h-12 rounded-2xl transition-transform active:scale-95"
+            >
               Get Full Analysis
             </Button>
           </div>

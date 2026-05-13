@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface AdminStats {
   users: number;
   recipes: number;
@@ -6,10 +7,14 @@ export interface AdminStats {
 
 export interface AdminAnalytics {
   userGrowth: {
-    date: string;
-    count: number;
+    name: string;
+    value: number;
   }[];
   cuisineDistribution: {
+    name: string;
+    value: number;
+  }[];
+  systemEngagement: {
     name: string;
     value: number;
   }[];
@@ -27,8 +32,8 @@ export interface UserStats {
 
 export interface UserAnalytics {
   calorieTrend: {
-    date: string;
-    calories: number;
+    name: string;
+    value: number;
   }[];
   macroBreakdown: {
     name: string;
